@@ -102,7 +102,7 @@ int main() {
     (E*=A).print_mat("E *= A:\n");
     */
     (E + 5.0).print_mat("E + 5\n");
-    (6.0 + E).print_mat("6 + E\n");
+    (5.0 + E * E).print_mat("6 + E\n");
     (E - 5.0).print_mat("E - 5\n");
     (6.0 - E).print_mat("6 - E\n");
     (10.0 * E).print_mat("10 * E\n");
