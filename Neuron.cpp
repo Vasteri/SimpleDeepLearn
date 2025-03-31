@@ -24,17 +24,21 @@ Neuron::Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outs
 
 
 void Neuron::summary(){
-    std::cout << "Neuron\n";
+    std::cout << "Neuron: " << input_shape << " -> " << output_shape << "\n";
     if (next_layer != nullptr) {
         next_layer->summary();
     }
 }
 
 
-Matrix<double>&  Neuron::forward_propagation(Matrix<double>& input_outside){
+Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
+    std::cout << "Neuron:forward\n";
     this->input = input_outside;
     Matrix<double> result = input * weights;
-    return next_layer->forward_propagation(result);
+    if (next_layer != nullptr)
+        return next_layer->forward_propagation(result);
+    else    
+        return result;
 }
 
 

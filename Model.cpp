@@ -27,5 +27,6 @@ void Model::compile(){
 
 
 Matrix<double> Model::forward_propagation(Matrix<double> input_x){
+    std::cout << "Model:forward\n"; 
     return input_layer->forward_propagation(input_x);
 }
