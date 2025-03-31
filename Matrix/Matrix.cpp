@@ -2,6 +2,18 @@
 #include <iostream>
 #include "Matrix.h"
 
+template <typename Type>
+Matrix<Type>::Matrix() {
+    //std::printf("New\n");
+    dim = 1;
+    memory = 1;
+    dims = new int[dim];
+    dims[0] = 1;
+
+    mat = new Type[memory];
+    mat[0] = 0;
+}
+
 
 template <typename Type>
 Matrix<Type>::Matrix(int argc, int argv[]) {
@@ -20,7 +32,6 @@ Matrix<Type>::Matrix(int argc, int argv[]) {
         { mat[i] = 0; }  //i * n + j
     }
 }
-
 
 
 template <typename Type>
@@ -191,7 +202,7 @@ Type& Matrix<Type>::operator[](const int id) const{
     return *(mat + id);
 }
 
-
+/*
 template <typename Type>
 Matrix<Type> Matrix<Type>::operator+(const Matrix<Type>& mat2){
     if (dim != mat2.dim)
@@ -253,10 +264,74 @@ Matrix<Type> Matrix<Type>::operator*(const Matrix<Type>& mat2){
     }
     return res;
 }
+*/
+template <typename Type>
+Matrix<Type> operator+(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
+    if (mat1.dim != mat2.dim)
+        throw MatrixException("Dims are not equal");
+    
+    Matrix<Type> res(mat1.dim, mat1.dims);
+    for (int i = 0; i < mat1.memory; i++)
+        res[i] = mat1[i] + mat2[i];
+    return res;
+}
 
 
 template <typename Type>
-Matrix<Type> operator +(Matrix<Type>& mat2, Type element){
+Matrix<Type> operator-(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
+    if (mat1.dim != mat2.dim)
+        throw MatrixException("Dims are not equal");
+    
+    Matrix<Type> res(mat1.dim, mat1.dims);
+    for (int i = 0; i < mat1.memory; i++)
+        res[i] = mat1[i] - mat2[i];
+    return res;
+}
+
+
+template <typename Type>
+Matrix<Type> operator*(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
+    if ((mat1.dim > 2) | (mat2.dim > 2))
+        throw MatrixException("Much more dims");
+    if (mat1.dim == 1){
+        if (1 != mat2.dims[0]) 
+            throw MatrixException("Incorrect dims");
+    }
+    else {
+        if (mat1.dims[1] != mat2.dims[0]) 
+            throw MatrixException("Incorrect dims");
+    }
+    int m = mat1.dims[0];
+    int s = mat2.dims[0];
+    int n, dims_res;
+    if (mat2.dim == 1) {
+        n = 1;
+        dims_res = 1;
+    }
+    else {
+        n = mat2.dims[1];
+        dims_res = 2;
+    }
+    int A1[] = {m, n};
+    Matrix<Type> res(dims_res, A1);
+    
+    int i, j, k;
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            res[i * n + j] = 0;
+            for (k = 0; k < s; k++) {
+                res[i * n + j] += mat1[i * s + k] * mat2[k * n + j];
+            }
+        }
+    }
+    return res;
+}
+
+
+
+
+template <typename Type>
+Matrix<Type> operator +(const Matrix<Type>& mat2, const Type element){
     Matrix<Type> res(mat2);
     for (int i = 0; i < res.GetMemory(); i++)
         res[i] += element;
@@ -265,7 +340,7 @@ Matrix<Type> operator +(Matrix<Type>& mat2, Type element){
 
 
 template <typename Type>
-Matrix<Type> operator -(Matrix<Type>& mat2, Type element){
+Matrix<Type> operator -(const Matrix<Type>& mat2, const Type element){
     Matrix<Type> res(mat2);
     for (int i = 0; i < res.GetMemory(); i++)
         res[i] -= element;
@@ -274,7 +349,7 @@ Matrix<Type> operator -(Matrix<Type>& mat2, Type element){
 
 
 template <typename Type>
-Matrix<Type> operator *(Matrix<Type>& mat2, Type element){
+Matrix<Type> operator *(const Matrix<Type>& mat2, const Type element){
     Matrix<Type> res(mat2);
     for (int i = 0; i < res.GetMemory(); i++)
         res[i] *= element;
@@ -283,19 +358,19 @@ Matrix<Type> operator *(Matrix<Type>& mat2, Type element){
 
 
 template <typename Type>
-Matrix<Type> operator +(Type element, Matrix<Type>& mat2){
+Matrix<Type> operator +(const Type element, const Matrix<Type>& mat2){
     return mat2 + element; 
 }
 
 
 template <typename Type>
-Matrix<Type> operator -(Type element, Matrix<Type>& mat2){
+Matrix<Type> operator -(const Type element, const Matrix<Type>& mat2){
     return -(mat2 - element);
 }
 
 
 template <typename Type>
-Matrix<Type> operator *(Type element, Matrix<Type>& mat2){
+Matrix<Type> operator *(const Type element, const Matrix<Type>& mat2){
     return mat2 * element;
 }
 
@@ -314,14 +389,14 @@ Matrix<Type>& Matrix<Type>::operator *= (const Matrix<Type> mat2);
 
 
 template <typename Type>
-Matrix<Type>& Matrix<Type>::operator += (const Type element);
+Matrix<Type>& Matrix<Type>::operator += (const const Type element);
 
 
 template <typename Type>
-Matrix<Type>& Matrix<Type>::operator -= (const Type element);
+Matrix<Type>& Matrix<Type>::operator -= (const const Type element);
 
 
 template <typename Type>
-Matrix<Type>& Matrix<Type>::operator *= (const Type element);
+Matrix<Type>& Matrix<Type>::operator *= (const const Type element);
 */
 

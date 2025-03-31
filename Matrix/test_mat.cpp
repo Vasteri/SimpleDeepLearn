@@ -109,5 +109,10 @@ int main() {
     (E * 11.0).print_mat("E * 11\n");
     //(5 + E).print_mat("5 + E\n");
     std::printf("End\n");
+
+
+    int b;
+    std::cout << b;
+
     return 0;
 }

@@ -1,4 +1,3 @@
-#pragma once
 #include "Matrix/Matrix.cpp"
 
 class Layer {
@@ -13,7 +12,11 @@ class Layer {
         static double speed_learn;
         bool trainable;
         
-        virtual char* summary();
-        virtual Matrix<double>&  forward_propagation(Matrix<double>& input);
-        virtual void backward_propagation(Matrix<double>& input);
+        virtual ~Layer();
+
+        int get_output_shape();
+
+        virtual void summary();
+        virtual Matrix<double>&  forward_propagation(Matrix<double>& input_outside){};
+        virtual void backward_propagation(Matrix<double>& input_outside){};
 };

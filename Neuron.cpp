@@ -9,25 +9,37 @@ void Neuron::init_weights(){
 }
 
 
-Neuron::Neuron(int count_neurons, Layer* prev_layer, bool trainable = true){
-    this->trainable = trainable;
-    this->input_shape = prev_layer->output_shape;
+Neuron::Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outside){
+    Layer();
+    this->trainable = trainable_outside;
+    this->input_shape = prev_layer_outside->get_output_shape();
     this->output_shape = count_neurons;
-    this->prev_layer = prev_layer;
-    prev_layer->next_layer = this;
+    this->prev_layer = prev_layer_outside;
+    this->next_layer = nullptr;
+    prev_layer_outside->next_layer = this;
     int size[] = {input_shape, output_shape};
     this->weights = Matrix<double>(2, size);
     init_weights();
 }
 
 
-Matrix<double>&  Neuron::forward_propagation(Matrix<double>& input){
-    this->input = input;
-    return next_layer->forward_propagation(input * weights);
+void Neuron::summary(){
+    std::cout << "Neuron\n";
+    if (next_layer != nullptr) {
+        next_layer->summary();
+    }
 }
 
 
-void Neuron::backward_propagation(Matrix<double>& input){
-    prev_layer->backward_propagation(input * weights.T());
-    weights = weights - speed_learn * ((this->input).T() * input);
+Matrix<double>&  Neuron::forward_propagation(Matrix<double>& input_outside){
+    this->input = input_outside;
+    Matrix<double> result = input * weights;
+    return next_layer->forward_propagation(result);
+}
+
+
+void Neuron::backward_propagation(Matrix<double>& input_outside){
+    Matrix<double> result = input_outside * weights.T();
+    prev_layer->backward_propagation(result);
+    weights = weights - speed_learn * ((this->input).T() * input_outside);
 }

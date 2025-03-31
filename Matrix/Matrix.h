@@ -6,6 +6,7 @@ class Matrix {
         int* dims;
         int memory;
     public:
+        Matrix();
         Matrix(int argc, int argv[]);
 
         ~Matrix();
@@ -24,15 +25,18 @@ class Matrix {
 
         Matrix<Type> operator - ();
         Type&        operator [](const int id) const;
-        Matrix<Type> operator + (const Matrix<Type>& mat2);
-        Matrix<Type> operator - (const Matrix<Type>& mat2);
-        Matrix<Type> operator * (const Matrix<Type>& mat2);
-        template <typename Type2> friend Matrix<Type2> operator+(Matrix<Type2>& mat2, Type2 element);
-        template <typename Type2> friend Matrix<Type2> operator-(Matrix<Type2>& mat2, Type2 element);
-        template <typename Type2> friend Matrix<Type2> operator*(Matrix<Type2>& mat2, Type2 element);
-        template <typename Type2> friend Matrix<Type2> operator+(Type2 element, Matrix<Type2>& mat2);
-        template <typename Type2> friend Matrix<Type2> operator-(Type2 element, Matrix<Type2>& mat2);
-        template <typename Type2> friend Matrix<Type2> operator*(Type2 element, Matrix<Type2>& mat2);
+        //Matrix<Type> operator + (const Matrix<Type>& mat2);
+        //Matrix<Type> operator - (const Matrix<Type>& mat2);
+        //Matrix<Type> operator * (const Matrix<Type>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator + (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator - (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator * (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator + (const Matrix<Type2>& mat2, const Type2 element);
+        template <typename Type2> friend Matrix<Type2> operator - (const Matrix<Type2>& mat2, const Type2 element);
+        template <typename Type2> friend Matrix<Type2> operator * (const Matrix<Type2>& mat2, const Type2 element);
+        template <typename Type2> friend Matrix<Type2> operator + (const Type2 element, const Matrix<Type2>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator - (const Type2 element, const Matrix<Type2>& mat2);
+        template <typename Type2> friend Matrix<Type2> operator * (const Type2 element, const Matrix<Type2>& mat2);
         /*
         Matrix<Type>& operator += (const Matrix<Type> mat2);
         Matrix<Type>& operator -= (const Matrix<Type> mat2);
@@ -47,9 +51,9 @@ class Matrix {
 
 class MatrixException
 {
-public: 
-    MatrixException(std::string message): message{message}{}
-    std::string getMessage() const {return message;}
-private:
-    std::string message;
+    private:
+        std::string message;
+    public: 
+        MatrixException(std::string input_message): message{input_message}{}
+        std::string getMessage() const {return message;}
 };

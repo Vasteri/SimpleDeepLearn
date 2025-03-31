@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/valer/Desktop/вуз/Операционные системы/Лабы/0/SimpleDeepLearn/Matrix",
-      "program": "c:/Users/valer/Desktop/вуз/Операционные системы/Лабы/0/SimpleDeepLearn/Matrix/build/Debug/outDebug",
+      "cwd": "c:/Users/valer/Desktop/вуз/Операционные системы/Лабы/0/SimpleDeepLearn",
+      "program": "c:/Users/valer/Desktop/вуз/Операционные системы/Лабы/0/SimpleDeepLearn/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

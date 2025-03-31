@@ -1,14 +1,24 @@
 #include "Input.h"
 
-Input::Input(int input_shape){
-    this->input_shape = input_shape;
+Input::Input(int input_shape_neurons): Layer(){
+    this->input_shape = input_shape_neurons;
+    this->next_layer = nullptr;
 }
 
 
-Matrix<double>&  Input::forward_propagation(Matrix<double>& input){
-    return next_layer->forward_propagation(input);
+void Input::summary(){
+    std::cout << "Input\n";
+    if (next_layer != nullptr) {
+        next_layer->summary();
+    }
 }
 
 
-void Input::backward_propagation(Matrix<double>& input){
+Matrix<double>&  Input::forward_propagation(Matrix<double>& input_neurons){
+    return next_layer->forward_propagation(input_neurons);
+}
+
+
+void Input::backward_propagation(Matrix<double>& input_neurons){
+    return;
 }
