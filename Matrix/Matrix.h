@@ -25,9 +25,7 @@ class Matrix {
 
         Matrix<Type> operator - ();
         Type&        operator [](const int id) const;
-        //Matrix<Type> operator + (const Matrix<Type>& mat2);
-        //Matrix<Type> operator - (const Matrix<Type>& mat2);
-        //Matrix<Type> operator * (const Matrix<Type>& mat2);
+        template <typename Type2> friend std::ostream &operator<<(std::ostream& os, const Matrix<Type2>& mat);
         template <typename Type2> friend Matrix<Type2> operator + (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
         template <typename Type2> friend Matrix<Type2> operator - (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
         template <typename Type2> friend Matrix<Type2> operator * (const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);

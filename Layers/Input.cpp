@@ -22,5 +22,6 @@ Matrix<double>  Input::forward_propagation(Matrix<double>& input_neurons){
 
 
 void Input::backward_propagation(Matrix<double>& input_neurons){
+    std::cout << "Input:backward\n";
     return;
 }

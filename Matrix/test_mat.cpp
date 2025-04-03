@@ -112,7 +112,9 @@ int main() {
 
 
     int b;
-    std::cout << b;
+    std::cout << b << std::endl;
+
+    std::cout << E + 1.0;
 
     return 0;
 }

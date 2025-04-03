@@ -202,69 +202,27 @@ Type& Matrix<Type>::operator[](const int id) const{
     return *(mat + id);
 }
 
-/*
-template <typename Type>
-Matrix<Type> Matrix<Type>::operator+(const Matrix<Type>& mat2){
-    if (dim != mat2.dim)
-        throw MatrixException("Dims are not equal");
-    
-    Matrix<Type> res(dim, dims);
-    for (int i = 0; i < memory; i++)
-        res[i] = mat[i] + mat2[i];
-    return res;
-}
 
-
-template <typename Type>
-Matrix<Type> Matrix<Type>::operator-(const Matrix<Type>& mat2){
-    if (dim != mat2.dim)
-        throw MatrixException("Dims are not equal");
-    
-    Matrix<Type> res(dim, dims);
-    for (int i = 0; i < memory; i++)
-        res[i] = mat[i] - mat2[i];
-    return res;
-}
-
-
-template <typename Type>
-Matrix<Type> Matrix<Type>::operator*(const Matrix<Type>& mat2){
-    if ((this->dim > 2) | (mat2.dim > 2))
-        throw MatrixException("Much more dims");
-    if (this->dim == 1){
-        if (1 != mat2.dims[0]) 
-            throw MatrixException("Incorrect dims");
+template <typename Type2> 
+std::ostream &operator<<(std::ostream& os, const Matrix<Type2>& mat){
+    if (mat.dim == 1){
+        for (int i = 0; i < mat.memory; i++)
+            { os << mat.mat[i] << " "; }
+        os << std::endl;
     }
-    else {
-        if (this->dims[1] != mat2.dims[0]) 
-            throw MatrixException("Incorrect dims");
-    }
-    int m = dims[0];
-    int s = mat2.dims[0];
-    int n, dims_res;
-    if (mat2.dim == 1) {
-        n = 1;
-        dims_res = 1;
-    }
-    else {
-        n = mat2.dims[1];
-        dims_res = 2;
-    }
-    int A1[] = {m, n};
-    Matrix<Type> res(dims_res, A1);
-    
-    int i, j, k;
-    for (i = 0; i < m; i++) {
-        for (j = 0; j < n; j++) {
-            res[i * n + j] = 0;
-            for (k = 0; k < s; k++) {
-                res[i * n + j] += mat[i * s + k] * mat2[k * n + j];
-            }
+    else if (mat.dim == 2){
+        for (int i = 0; i < mat.dims[0]; i++){
+            for (int j = 0; j < mat.dims[1]; j++)
+                { os << mat.mat[i * mat.dims[1] + j] << " "; }
+            os << std::endl;
         }
+        os << std::endl;
     }
-    return res;
+    else throw MatrixException("Much more dims\n");
+    return os;
 }
-*/
+
+
 template <typename Type>
 Matrix<Type> operator+(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
     if (mat1.dim != mat2.dim)
@@ -326,8 +284,6 @@ Matrix<Type> operator*(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
     }
     return res;
 }
-
-
 
 
 template <typename Type>

@@ -44,6 +44,7 @@ Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
 
 void Neuron::backward_propagation(Matrix<double>& input_outside){
     Matrix<double> result = input_outside * weights.T();
-    prev_layer->backward_propagation(result);
+    if (prev_layer != nullptr)
+        prev_layer->backward_propagation(result);
     weights = weights - speed_learn * ((this->input).T() * input_outside);
 }
