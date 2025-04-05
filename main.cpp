@@ -18,7 +18,8 @@ Model* make_model() {
 }
 
 
-int main(){ 
+int main(){
+    Layer::speed_learn = 0.1;
     Model* model = make_model();
     model->summary();
 
@@ -27,7 +28,33 @@ int main(){
     input_vector.push_back(5);
 
     std::vector<double> result_vector = model->forward_propagation(input_vector);
-    std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector;
+    std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector << std::endl;
+
+
+    const int n = 100;
+    std::vector<std::vector<double>> x(n), y_true(n);
+    int a, b, r;
+    for (unsigned int i = 0; i < n; i++){
+        a = std::rand() % 2;
+        b = std::rand() % 2;
+        x[i].push_back(a);
+        x[i].push_back(b);
+        if (a != b)
+            r = 1;
+        else
+            r = 0;
+        y_true[i].push_back(r);
+    }
+
+    std::vector<double> y_pred;
+    for (unsigned int i = 0; i < n; i++){
+        y_pred = model->forward_propagation(x[i]);
+        std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0] << std::endl;
+        model->backward_propagation(y_pred, y_true[i]);
+    }
+
+
+    std::cout << std::rand() % 2 << std::rand() % 2 << std::endl;
 
     /*
     int A1[] = {1, 2};

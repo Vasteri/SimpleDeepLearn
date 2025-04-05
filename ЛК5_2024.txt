@@ -1,0 +1,499 @@
+ЛК 5-2024.
+I. Модель искусственного нейрона. Роль смещения
+II. Линейный/плотный слой
+III. Функции активации
+IV. Многослойный перцептрон
+V. Функция активации relu
+VI. Функция активации softmax
+VII. Схема обучения с учителем
+VIII. Переобучение. Слой Dropout
+IX. Функции потерь библиотеки Keras.
+X. Подготовка данных. Преобразование, нормализация, one-hot-представление данных
+XI. Прогноз модели. Вычисление потерь
+XII. Классификатор MNIST на основе Dense-слоев
+XIII. Автокодировщик MNIST-MNIST на основе Dense-слоев
+XIV. Контрольные вопросы
+XV. Задачи 9 и 10
+
+I. Модель искусственного нейрона. Роль смещения
+ См. рис.
+
+II. Линейный/плотный слой
+ См. рис.
+ x = Dense(units = 64, activation = 'relu') # Keras
+ x = nn.Linear(32, 10) # PyTorch
+ x = F.log_softmax(x, dim = -1)
+ Дима - файл.
+
+III. Функции активации
+ 
+ http://100byte.ru/python/factors/factors.html#p1_3
+Функции активации, которые можно указать в качестве значения параметра activation при задании слоя
+(также эти функции можно задать и в виде слоя):
+ softmax(x, axis = -1) (здесь и далее x - входной тензор);
+ elu(x, alpha = 1.0) (Exponential linear unit), x, если x > 0 и alpha * (exp(x) - 1), если x < 0;
+ selu(x) (Scaled Exponential Linear Unit), scale * elu(x, alpha) ;
+ softplus(x), log(exp(x) + 1);
+ softsign(x), x / (abs(x) + 1);
+ relu(x, alpha = 0.0, max_value = None, threshold = 0.0) (Rectified Linear Unit), f(x) = max_value, если x >= max_value, f(x) = x, если threshold <= x < max_value и f(x) = alpha * (x - threshold) - в противном случае;
+ tanh(x) - гиперболический тангенс;
+ sigmoid(x);
+ hard_sigmoid(x) (вычисляется быстрее, чем sigmoid), возвращает 0, если x < -2.5, 1, если x > 2.5 и 0.2 * x + 0.5, если -2.5 <= x <= 2.5;
+ exponential(x) - ex;
+ linear(x) - линейная функция активации (ничего не меняет).
+
+ Способы задания функций активации:
+ from keras.layers import Activation, Dense
+ model.add(Dense(64))
+ model.add(Activation('tanh'))
+ или
+ model.add(Dense(64, activation = 'tanh'))
+ или
+ from keras import backend as K
+ model.add(Dense(64, activation = K.tanh))
+ или
+ x = Dense(units = 64, activation = 'relu') # Keras
+
+ Функции активации, которые задаются в виде слоя:
+ LeakyReLU(alpha = 0.3) (Leaky version of a Rectified Linear Unit), f(x) = alpha * x, если x < 0 и f(x) = x, если x >= 0;
+ PReLU(alpha_initializer = 'zeros', alpha_regularizer = None, alpha_constraint = None, shared_axes = None) (Parametric Rectified Linear Unit), f(x) = alpha * x, если x < 0 и f(x) = x, если x >= 0, где alpha - обучаемый массив той же формы, что и x (x - вход PReLU-слоя);
+ ELU(alpha = 1.0) (Exponential Linear Unit), f(x) = alpha * (exp(x) - 1.), если x < 0, f(x) = x, если x >= 0;
+ ThresholdedReLU(theta = 1.0) (Thresholded Rectified Linear Unit), f(x) = x, если x > theta, f(x) = 0 - в противном случае (theta >= 0, тип theta - float);
+ Softmax(axis = -1);
+ ReLU(max_value = None, negative_slope = 0.0, threshold = 0.0) (Rectified Linear Unit), f(x) = max_value, если x >= max_value, f(x) = x, если threshold <= x < max_value и f(x) = negative_slope * (x - threshold) - в противном случае.
+ 
+ Возможный способ задания функции активации (на примере LeakyReLU):
+ from keras.layers import LeakyReLU
+ hidden2_3 = Dense(12)(hidden2_2)
+ hidden2_4 = LeakyReLU(alpha = 0.4)(hidden2_3)
+
+IV. Многослойный перцептрон
+ Состоит из линейных слоев.
+from keras.models import Model
+from keras.layers import Input, Dense, Dropout, Flatten
+img_rows = img_cols = 28
+num_classes = 10
+inp = Input((img_rows * img_cols, 1))
+x = Flatten()(inp)
+x = Dropout(0.3)(x)
+x = Dense(units = 32, activation = 'relu')(x)
+output = Dense(num_classes, activation = 'softmax')(x)
+model = Model(inputs = inp, outputs = output)
+model.summary()
+model.compile(optimizer = 'Adam', loss = 'mse', metrics = ['accuracy'])
+
+Model: "MLP"
+┌─────────────────────────────────┬────────────────────────┬───────────────┐
+│ Layer (type)                    │ Output Shape           │       Param # │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ input_layer (InputLayer)        │ (None, 784, 1)         │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten (Flatten)               │ (None, 784)            │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (Dropout)               │ (None, 784)            │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense (Dense)                   │ (None, 32)             │        25,120 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 10)             │           330 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 25,450 (99.41 KB)
+ Trainable params: 25,450 (99.41 KB)
+ Non-trainable params: 0 (0.00 B)
+
+V. Функция активации relu
+ https://keras.io/api/layers/activations/#relu-function
+from keras.activations import relu
+x = [-10, -5, 0.0, 5, 10]
+y = relu(x) # [ 0.,  0.,  0.,  5., 10.]
+y = relu(x, negative_slope = 0.5) # [-5. , -2.5,  0. ,  5. , 10. ]
+y = relu(x, max_value = 5.) # [0., 0., 0., 5., 5.]
+y = relu(x, threshold = 5.) # [0., 0.,  0.,  0., 10.]
+print(y) # tf.Tensor([0. 0.  0.  0. 10.], shape=(5,), dtype=float32)
+print(y.numpy()) # [0. 0.  0.  0. 10.]
+
+
+VI. Функция активации softmax
+import keras # Создание модели нейронной сети
+import numpy as np
+x = np.array([-10, -5, 0.0, 5, 10])
+y = keras.activations.softmax(x, axis = -1)
+print(y.numpy()) # [2.047e-09 3.038e-07 4.50e-05 6.692e-03 9.932e-01]
+print(sum(y).numpy()) # 0.9999999999999999
+print(np.argmax(y)) # 4 - прогноз модели
+
+VII. Схема обучения с учителем
+ См. рис.
+ Keras:
+ history = model.fit(x_trn, y_trn, batch_size = 64, epochs = 90, verbose = 2, validation_data = (x_tst, y_tst))
+ Понятие эпохи.
+ One-hot представление меток.
+ Грессер Лаура, Кенг Ван Лун.Глубокое обучение с подкреплением: теория и практика на языке Python.
+ — СПб.: Питер, 2022. — 416 с.:
+ Процесс изменения параметров сети с целью минимизации потерь известен так же
+ как процесс обучения нейронной сети. В качестве примера предположим, что 
+ настроенная функция f(x) параметризирована весами сети θ как f(x; θ). Пусть 
+ L(f(x; θ), y) — заранее заданная функция потерь, где x и y — это входные
+ и выходные данные соответственно.
+ Процесс обучения может быть описан следующим образом.
+ 1. Из обучающего набора данных случайным образом выбирается набор (x, y), размер 
+    которого значительно меньше, чем размер всего набора данных.
+ 2. При прямом проходе по сети на основе входных значений x вычисляются прогнозные
+    выходные значения yˆ = f(x; θ).
+ 3. По выданным сетью прогнозным значениям yˆ и значениям y из отобранного
+    набора данных рассчитывается функция потерь L(yˆ, y)
+ 4. В соответствии с параметрами сети подсчитываются градиенты (частные производные) функции потерь ∇θL.
+    Библиотеки, например, PyTorch, Keras/TensorFlow выполняют этот процесс автоматически
+    с применением алгоритма обратного распространения ошибки.
+ 5. Оптимизатор используется для обновления параметров сети с помощью 
+    градиентов. Например, θ ← θ – α∇θL, где α — скалярное значение скорости обучения.
+ Эти шаги обучения повторяются, пока выходные данные сети не прекратят изменяться
+ или функция потерь не будет минимизирована/стабилизирована.
+
+VIII. Переобучение. Слой Dropout
+ См. 4 рис.
+
+IX. Функции потерь библиотеки Keras
+ Keras:
+ http://100byte.ru/python/loss/loss.html
+ Средняя квадратическая ошибка / mean squared error / mse
+ Средняя абсолютная ошибка / mean absolute error	 / mae
+ Средняя абсолютная процентная ошибка / mean absolute percentage error / mape
+ Средняя квадратическая логарифмическая ошибка / mean squared logarithmic error / msle
+ Квадрат верхней границы / squared hinge / sh
+ Верхняя граница / hinge / h
+ Категориальная верхняя граница / categorical hinge / CH
+ Логарифм гиперболического косинуса / logcosh / lc
+ Категориальная перекрестная энтропия / categorical crossentropy	/ cce
+ Разреженная категориальная перекрестная энтропия / sparse categorical crossentropy / scce
+ Бинарная перекрестная энтропия /  binary crossentropy / bce
+ Расстояние Кульбака-Лейблера / kullback leibler divergence / kld
+ Пуассон / Poisson / Poisson
+ Косинусная близость / cosine proximity	/ CP 
+
+X. Подготовка данных. Преобразование, нормализация, one-hot-представление данных
+
+def preprocess(x_trn, x_tst, preprocessor):
+    if preprocessor == 'MinMax':
+	from sklearn.preprocessing import MinMaxScaler
+        s = MinMaxScaler(feature_range = (0, 1))
+    elif preprocessor == 'Robust':
+        from sklearn.preprocessing import RobustScaler
+        s = RobustScaler(quantile_range =( 0.1, 99.9))
+    elif preprocessor == 'power_transform':
+	from sklearn.preprocessing PowerTransformer
+        s = PowerTransformer(method = 'yeo-johnson')
+    else :
+        from sklearn.preprocessing import StandardScaler
+        s = StandardScaler()
+    x_trn[data_cols] = s.fit_transform(x_trn[data_cols])
+    x_tst[data_cols] = s.transform(x_tst[data_cols])
+    return x_trn, x_tst, data_cols
+
+from sklearn.datasets import make_blobs
+N = 100 # Создаем 2 гауссовских кластера
+x_data, y_data = make_blobs(n_samples = 2 * N, centers = 2, n_features = 2, center_box = (5.0, 9.0))
+print('Стандартизация данных')
+from sklearn.preprocessing import StandardScaler
+# fit- вычисляет среднее значение и стандартное отклонение для последующей стандартизации
+scaler = StandardScaler(copy = False).fit(x_data)
+x_data = scaler.transform(x_data) # Стандартизация за счет центрирования и масштабирования
+plt_sets(x_data, y_data)
+
+import numpy as np
+from sklearn.preprocessing import normalize # Нормализация
+x = np.array([-10, -5, 0.0, 5, 10])
+x = x.reshape(1, -1)
+x = normalize(x) # [[-0.632 -0.316 0. 0.316 0.632]]
+
+One-hot-представление данных
+from sklearn.preprocessing import OneHotEncoder
+import numpy as np
+# Корпус из 4-х документов
+##corp = [
+##    'Заяц в лес бежал по лугу,',
+##    'Я из лесу шел домой, –',
+##    'Бедный заяц с перепугу',
+##    'Так и сел передо мной!']
+# После обработки
+corp = [
+    ('заяц', 'в', 'лес', 'бежал', 'по', 'лугу'),
+    ('я', 'из', 'лесу', 'шел', 'домой'),
+    ('бедный', 'заяц', 'с', 'перепугу'),
+    ('так', 'и', 'сел', 'передо', 'мной')]
+encoder = OneHotEncoder(sparse_output = False)
+# Список слов корпуса
+corp_words = []
+for doc in corp:
+    corp_words.extend([w for w in doc])
+# Массив слов корпуса для encoder.fit
+arr_words = np.array(corp_words).reshape(len(corp_words), 1)
+one_hot = encoder.fit(arr_words)
+# Имена признаков (словарь)
+feature_names = one_hot.get_feature_names_out()
+print(feature_names)
+['x0_бедный' 'x0_бежал' 'x0_в' 'x0_домой' 'x0_заяц' 'x0_и' 'x0_из'
+ 'x0_лес' 'x0_лесу' 'x0_лугу' 'x0_мной' 'x0_передо' 'x0_перепугу' 'x0_по'
+ 'x0_с' 'x0_сел' 'x0_так' 'x0_шел' 'x0_я']
+# Массив one-hot представлений слов документа
+arr_one_hot_words = one_hot.transform(arr_words)
+# Вывод one-hot представлений слов первого документа
+print(arr_one_hot_words[:len(corp[0]), :])
+##[[0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]  заяц
+## [0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]  в
+## [0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]  лес
+## [0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]  бежал
+## [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]  по
+## [0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]] лугу
+
+MNIST / EMNIST
+import numpy as np
+num_classes = 10
+def prep_data(x, y):
+    import tensorflow as tf
+    x = x.reshape(-1, rows * cols)
+    x = np.array(x, dtype = float) / 255 # Нормализация, а затем преобразование в one-hot
+    y = tf.keras.utils.to_categorical(y, num_classes) # 5 -> [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
+    return x, y
+
+XI. Прогноз модели. Вычисление потерь
+import keras # Создание модели нейронной сети
+import numpy as np
+x = np.array([0.1, 0.3, 0.0, 0.5, 0.2])
+y_pred = keras.activations.softmax(x, axis = -1)
+m = y_pred[np.argmax(y_pred)]
+y_true = [1. if p == m else 0. for p in y_pred]
+# y_pred: [0.175 0.213 0.158 0.261 0.193]
+# y_true: [0.0   0.0   0.0   1.0   0.0  ]
+loss = np.mean(np.square(y_true - y_pred)) # 0.13699590862111516
+
+XII. Классификатор MNIST на основе Dense-слоев
+ Обучение
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+img_rows = img_cols = 28
+num_classes = 10
+show_k = 0
+pathToData = 'C:/_B/AM/CG/mnist/'
+fn_model = pathToData + 'mnist_dense.keras'
+def load_data():
+    print('Загрузка данных из двоичных файлов')
+    with open(pathToData + 'images_trn.bin', 'rb') as read_binary:
+        x_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_trn.bin', 'rb') as read_binary:
+        y_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'images_tst.bin', 'rb') as read_binary:
+        x_tst = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_tst.bin', 'rb') as read_binary:
+        y_tst = np.fromfile(read_binary, dtype = np.uint8)
+    return x_trn, y_trn, x_tst, y_tst
+def prep_data(x, y, num_classes = 0):
+    x = x.reshape(-1, img_rows * img_cols)
+    x = np.array(x, dtype = float) / 255
+    if num_classes > 0:
+        y = tf.keras.utils.to_categorical(y, num_classes)
+    return x, y
+def make_model():
+    from keras.models import Model
+    from keras.layers import Input, Dense, Dropout, Flatten
+    inp = Input((img_rows * img_cols, 1)) # Входной слой
+    x = Flatten()(inp)
+    x = Dropout(0.3)(x)
+    x = Dense(units = 32, activation = 'relu')(x)
+    output = Dense(num_classes, activation = 'softmax')(x)
+    model = Model(inputs = inp, outputs = output)
+    model.summary()
+    model.compile(optimizer = 'Adam', loss = 'mse', metrics = ['accuracy'])
+    return model
+# Вывод истории обучения
+def one_plot(n, y_lb, loss_acc, val_loss_acc):
+    plt.subplot(1, 2, n)
+    if n == 1:
+        lb, lb2 = 'loss', 'val_loss'
+        yMin = 0
+        yMax = 1.05 * max(max(loss_acc), max(val_loss_acc))
+    else:
+        lb, lb2 = 'acc', 'val_acc'
+        yMin = min(min(loss_acc), min(val_loss_acc))
+        yMax = 1.0
+    plt.plot(loss_acc, color = 'r', label = lb, linestyle = '--')
+    plt.plot(val_loss_acc, color = 'g', label = lb2)
+    plt.ylabel(y_lb)
+    plt.xlabel('Эпоха')
+    plt.ylim([0.95 * yMin, yMax])
+    plt.legend()
+x_trn, y_trn, x_tst, y_tst = load_data() # Загрузка ОМ и ПМ
+x_trn, y_trn = prep_data(x_trn, y_trn, num_classes = num_classes)
+x_tst, y_tst = prep_data(x_tst, y_tst, num_classes = num_classes)
+if show_k:
+    # Показываем 25 (5 * 5) изображений из ОМ и ПМ
+    show_x(x_trn, y_trn, 25, 'Цифры из ОМ')
+    show_x(x_tst, y_tst, 25, 'Цифры из ПМ')
+model = make_model()
+h = model.fit(x_trn, y_trn, batch_size = 128, epochs = 30,
+              verbose = 2, validation_data = (x_tst, y_tst))
+print('Модель сохранена в файле', fn_model)
+model.save(fn_model)
+# История обучения; вывод графиков обучения
+history = h.history
+plt.figure(figsize = (9, 4))
+plt.subplots_adjust(wspace = 0.5)
+one_plot(1, 'Потери', history['loss'], history['val_loss'])
+one_plot(2, 'Точность', history['accuracy'], history['val_accuracy'])
+plt.suptitle('Потери и точность')
+plt.show()
+
+Прогноз
+import numpy as np
+from sklearn.metrics import classification_report
+from keras.models import load_model
+import tensorflow as tf
+img_rows = img_cols = 28
+num_classes = 10
+pathToData = 'C:/_B/AM/CG/mnist/'
+fn_model = pathToData + 'mnist_dense.keras'
+def load_data():
+    print('Загрузка данных из двоичных файлов')
+    with open(pathToData + 'images_trn.bin', 'rb') as read_binary:
+        x_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_trn.bin', 'rb') as read_binary:
+        y_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'images_tst.bin', 'rb') as read_binary:
+        x_tst = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_tst.bin', 'rb') as read_binary:
+        y_tst = np.fromfile(read_binary, dtype = np.uint8)
+    return x_trn, y_trn, x_tst, y_tst
+def prep_data(x, y, num_classes = 0):
+    x = x.reshape(-1, img_rows * img_cols)
+    x = np.array(x, dtype = float) / 255
+    if num_classes > 0:
+        y = tf.keras.utils.to_categorical(y, num_classes)
+    return x, y
+x_trn, y_trn, x_tst, y_tst = load_data() # Загрузка ОМ и ПМ
+x_trn, y_trn = prep_data(x_trn, y_trn)
+x_tst, y_tst = prep_data(x_tst, y_tst)
+model = load_model(fn_model)
+y_pred = model.predict(x_tst, verbose = 0)
+y_pred = np.array([np.argmax(m) for m in y_pred])
+print(classification_report(y_tst, y_pred, digits = 4))
+y_tst = tf.keras.utils.to_categorical(y_tst, num_classes)
+evl = model.evaluate(x_tst, y_tst, verbose = 0)
+print('Точность:', round(evl[1] * 100, 2))
+              precision    recall  f1-score   support
+
+           0     0.9651    0.9878    0.9763       980
+           1     0.9824    0.9859    0.9842      1135
+           2     0.9602    0.9574    0.9588      1032
+           3     0.9426    0.9594    0.9509      1010
+           4     0.9748    0.9450    0.9597       982
+           5     0.9802    0.9417    0.9605       892
+           6     0.9605    0.9645    0.9625       958
+           7     0.9692    0.9504    0.9597      1028
+           8     0.9238    0.9579    0.9405       974
+           9     0.9417    0.9445    0.9431      1009
+
+    accuracy                         0.9599     10000
+   macro avg     0.9600    0.9594    0.9596     10000
+weighted avg     0.9602    0.9599    0.9599     10000
+Точность: 95.99
+
+XIII. Автокодировщик MNIST-MNIST на основе Dense-слоев
+ Фильмы: неизвестная и 9-й вал.
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from keras.models import Model
+from keras.layers import Input, Dense, Dropout, Flatten, LeakyReLU
+img_rows = img_cols = 28
+num_classes = 10
+latent_size = 32 # Размер латентного пространста
+plt_epoch = 1
+epochs = 51 # Число эпох
+n_pics = 16
+show_k = 0
+pathToData = 'C:/_B/AM/CG/mnist/'
+fn_model = pathToData + 'au.keras'
+def load_data():
+    print('Загрузка данных из двоичных файлов')
+    with open(pathToData + 'images_trn.bin', 'rb') as read_binary:
+        x_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_trn.bin', 'rb') as read_binary:
+        y_trn = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'images_tst.bin', 'rb') as read_binary:
+        x_tst = np.fromfile(read_binary, dtype = np.uint8)
+    with open(pathToData + 'labels_tst.bin', 'rb') as read_binary:
+        y_tst = np.fromfile(read_binary, dtype = np.uint8)
+    return x_trn, y_trn, x_tst, y_tst
+def prep_data(x, y, num_classes = 0):
+    x = x.reshape(-1, img_rows * img_cols)
+    x = np.array(x, dtype = float) / 255
+    if num_classes > 0:
+        y = tf.keras.utils.to_categorical(y, num_classes)
+    return x, y
+def one_part(units, x):
+    x = Dense(units)(x)
+    x = LeakyReLU()(x)
+    return Dropout(0.25)(x)
+def make_model():
+    inp = Input((img_rows * img_cols, 1)) # Входной слой
+    x = Flatten()(inp)
+    x = one_part(512, x)
+    x = one_part(256, x)
+    x = one_part(128, x)
+    x = one_part(64, x)
+    x = Dense(latent_size)(x)
+    encoded = LeakyReLU()(x)
+    x = one_part(64, encoded)
+    x = one_part(128, x)
+    x = one_part(256, x)
+    x = one_part(512, x)
+    decoded = Dense(img_rows * img_cols, activation = 'sigmoid')(x)
+    model = Model(inputs = inp, outputs = decoded)
+    model.summary()
+    model.compile('adam', loss = 'binary_crossentropy')
+    return model
+def some_plts(imgs):
+    n = int(np.sqrt(n_pics))
+    fig, axs = plt.subplots(n, n)
+    k = -1
+    for i in range(n):
+        for j in range(n):
+            k += 1
+            img = imgs[k].reshape(img_rows, img_cols)
+            axs[i, j].imshow(img, cmap = 'gray')
+            axs[i, j].axis('off')
+    plt.subplots_adjust(wspace = 1, hspace = 0)
+    fig.savefig('%d.png' % epoch)
+    plt.close()
+x_trn, y_trn, x_tst, y_tst = load_data() # Загрузка ОМ и ПМ
+x_trn, y_trn = prep_data(x_trn, y_trn)
+x_tst, y_tst = prep_data(x_tst, y_tst)
+if show_k:
+    # Показываем 25 (5 * 5) изображений из ОМ и ПМ
+    show_x(x_trn, y_trn, 25, 'Цифры из ОМ')
+    show_x(x_tst, y_tst, 25, 'Цифры из ПМ')
+model = make_model()
+for epoch in range(epochs):
+    print('epoch:', epoch + 1)
+    model.fit(x = x_trn, y = x_trn, verbose = 0)
+    if plt_epoch and epoch > 0 and epoch % 10 == 0:
+        arr_idx = np.random.randint(0, len(y_tst), n_pics)
+        imgs_for_test = x_tst[arr_idx].reshape(n_pics, img_rows * img_cols)
+        some_plts(imgs_for_test)
+        imgs_pedicted = model.predict(imgs_for_test, verbose = 0)
+        some_plts(imgs_pedicted)
+print('Модель сохранена в файле', fn_model)
+model.save(fn_model)
+
+ Использование обученного Автокодировщика
+ Самостоятельно.
+
+XIV. Контрольные вопросы
+ По материалам лекции
+
+XV. Задачи 9 и 10
+9. Программирование классификатора MNIST на основе Dense-слоев.
+   Употребить не менее 3-х Dense-слоев.
+10. Программирование автокодировщика MIST - EMNIST на основе Dense-слоев.
+
+

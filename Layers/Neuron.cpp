@@ -32,7 +32,7 @@ void Neuron::summary(){
 
 
 Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
-    std::cout << "Neuron:forward\n";
+    //std::cout << "Neuron:forward\n";
     this->input = input_outside;
     Matrix<double> result = input * weights;
     if (next_layer != nullptr)
@@ -43,6 +43,7 @@ Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
 
 
 void Neuron::backward_propagation(Matrix<double>& input_outside){
+    //std::cout << "Neuron:backward\n";
     Matrix<double> result = input_outside * weights.T();
     if (prev_layer != nullptr)
         prev_layer->backward_propagation(result);
