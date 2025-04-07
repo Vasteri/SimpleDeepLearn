@@ -19,7 +19,7 @@ Model* make_model() {
 
 
 int main(){
-    Layer::speed_learn = 0.1;
+    Layer::speed_learn = 0.025;
     Model* model = make_model();
     model->summary();
 
@@ -31,7 +31,7 @@ int main(){
     std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector << std::endl;
 
 
-    const int n = 100;
+    const int n = 1000;
     std::vector<std::vector<double>> x(n), y_true(n);
     int a, b, r;
     for (unsigned int i = 0; i < n; i++){
@@ -48,9 +48,27 @@ int main(){
 
     std::vector<double> y_pred;
     for (unsigned int i = 0; i < n; i++){
+        //if (!(x[i][0] == 0 && x[i][1] == 1)) {
         y_pred = model->forward_propagation(x[i]);
-        std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0] << std::endl;
+        std::cout << i << ": x:";
+        std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0];
         model->backward_propagation(y_pred, y_true[i]);
+        std::cout << " -> " << (model->forward_propagation(x[i]))[0] << std::endl;
+        //}
+    }
+
+    std::cout << "Test:" << std::endl;
+    std::vector<std::vector<double>> test(4);
+    test[0].push_back(0);
+    test[0].push_back(0);
+    test[1].push_back(1);
+    test[1].push_back(0);
+    test[2].push_back(0);
+    test[2].push_back(1);
+    test[3].push_back(1);
+    test[3].push_back(1);
+    for (int i = 0; i < 4; i++){
+        std::cout << i << ": " << model->forward_propagation(test[i]) << std::endl;
     }
 
 

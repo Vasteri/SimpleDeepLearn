@@ -148,9 +148,10 @@ template <typename Type>
 Matrix<Type> Matrix<Type>::T(){
     if (dim == 1){
         int A1[] = {1, dims[0]};
-        Matrix<Type> res = *this;
-        res.dim = 2;
-        res.dims = A1;
+        Matrix<Type> res(2, A1);
+        for (int i = 0; i < memory; i++){
+            res[i] = mat[i];
+        }
         return res;
     }
     else if (dim == 2){
@@ -159,7 +160,7 @@ Matrix<Type> Matrix<Type>::T(){
         int i, j;
         for (i = 0; i < dims[1]; i++){
             for (j = 0; j < dims[0]; j++){
-                res[i * dims[0] + j] = mat[j * dims[0] + i];
+                res[i * dims[0] + j] = mat[j * dims[1] + i];
             }
         }
         return res;

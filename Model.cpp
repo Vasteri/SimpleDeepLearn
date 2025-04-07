@@ -25,7 +25,6 @@ void Model::summary(){
 
 void Model::compile(const char* loss){
 
-
     if      (strcmp(loss, "mse" ) == 0) {
         loss_function = MSE;
         grad_loss_function = grad_MSE;

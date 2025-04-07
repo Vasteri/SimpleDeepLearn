@@ -1,11 +1,17 @@
 #include "Neuron.h"
 
 void Neuron::init_weights(){
-    for (int i = 0; i < input_shape; i++){
+    for (int i = 0; i < (input_shape); i++){
         for (int j = 0; j < output_shape; j++){
-            weights[i * output_shape + j] = 0.5;
+            weights[i * (output_shape) + j] = 0.5;
         }
     }
+    /*
+    for (int i = 0; i < (input_shape + 1); i++){
+        weights[i * (output_shape + 1) + output_shape] = 0.0;
+    }
+    weights[(output_shape + 1) * (input_shape + 1) - 1] = 1.0;
+    */
 }
 
 
@@ -45,7 +51,14 @@ Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
 void Neuron::backward_propagation(Matrix<double>& input_outside){
     //std::cout << "Neuron:backward\n";
     Matrix<double> result = input_outside * weights.T();
+    //std::cout << "result: " << result << "input_outside: " << input_outside << "weigth: " << weights << weights.T();
+
     if (prev_layer != nullptr)
         prev_layer->backward_propagation(result);
+    
+    //std::cout << "weigth 1: " << weights;
     weights = weights - speed_learn * ((this->input).T() * input_outside);
+    //std::cout << "weigth 2: " << weights;
+    //std::cout << input_outside;
+    //std::cout << speed_learn * ((this->input).T() * input_outside);
 }

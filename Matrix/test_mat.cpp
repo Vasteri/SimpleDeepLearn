@@ -116,5 +116,13 @@ int main() {
 
     std::cout << E + 1.0;
 
+    Matrix<double> vector_T(1, B1);
+    vector_T[0] = 1;
+    vector_T[1] = 2;
+    vector_T[2] = 3;
+    std::cout << vector_T << "? " << vector_T.T();
+    vector_T.print_info();
+    vector_T.T().print_info();
+
     return 0;
 }
