@@ -19,7 +19,7 @@ Model* make_model() {
 
 
 int main(){
-    Layer::speed_learn = 0.025;
+    Layer::speed_learn = 0.003;
     Model* model = make_model();
     model->summary();
 
@@ -33,16 +33,14 @@ int main(){
 
     const int n = 1000;
     std::vector<std::vector<double>> x(n), y_true(n);
-    int a, b, r;
+    int a, b;
+    double r;
     for (unsigned int i = 0; i < n; i++){
-        a = std::rand() % 2;
-        b = std::rand() % 2;
+        a = std::rand() % 6;
+        b = std::rand() % 6;
         x[i].push_back(a);
         x[i].push_back(b);
-        if (a != b)
-            r = 1;
-        else
-            r = 0;
+        r = 7.0 * a - 2.0 * (double)(b) + 7.0;
         y_true[i].push_back(r);
     }
 
@@ -67,7 +65,7 @@ int main(){
     test[2].push_back(1);
     test[3].push_back(1);
     test[3].push_back(1);
-    for (int i = 0; i < 4; i++){
+    for (unsigned int i = 0; i < 4; i++){
         std::cout << i << ": " << model->forward_propagation(test[i]) << std::endl;
     }
 

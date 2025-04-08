@@ -4,7 +4,6 @@ class Layer {
     protected:
         int   input_shape;
         int  output_shape;
-        Matrix<double> weights;
         Matrix<double>  input;
     public:
         Layer* prev_layer;

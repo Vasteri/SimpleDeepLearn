@@ -6,12 +6,9 @@ void Neuron::init_weights(){
             weights[i * (output_shape) + j] = 0.5;
         }
     }
-    /*
-    for (int i = 0; i < (input_shape + 1); i++){
-        weights[i * (output_shape + 1) + output_shape] = 0.0;
+    for (int i = 0; i < output_shape; i++){
+        displacement[i] = 0.5;
     }
-    weights[(output_shape + 1) * (input_shape + 1) - 1] = 1.0;
-    */
 }
 
 
@@ -25,6 +22,8 @@ Neuron::Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outs
     prev_layer_outside->next_layer = this;
     int size[] = {input_shape, output_shape};
     this->weights = Matrix<double>(2, size);
+    size[0] = 1;
+    this->displacement = Matrix<double>(2, size);
     init_weights();
 }
 
@@ -40,7 +39,8 @@ void Neuron::summary(){
 Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
     //std::cout << "Neuron:forward\n";
     this->input = input_outside;
-    Matrix<double> result = input * weights;
+    Matrix<double> result = input * weights + displacement;
+
     if (next_layer != nullptr)
         return next_layer->forward_propagation(result);
     else    
@@ -50,15 +50,13 @@ Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
 
 void Neuron::backward_propagation(Matrix<double>& input_outside){
     //std::cout << "Neuron:backward\n";
-    Matrix<double> result = input_outside * weights.T();
-    //std::cout << "result: " << result << "input_outside: " << input_outside << "weigth: " << weights << weights.T();
 
-    if (prev_layer != nullptr)
+    if (prev_layer != nullptr) {
+        Matrix<double> result = input_outside * weights.T();
         prev_layer->backward_propagation(result);
+    }
+    //std::cout << weights << displacement;
     
-    //std::cout << "weigth 1: " << weights;
     weights = weights - speed_learn * ((this->input).T() * input_outside);
-    //std::cout << "weigth 2: " << weights;
-    //std::cout << input_outside;
-    //std::cout << speed_learn * ((this->input).T() * input_outside);
+    displacement = displacement - speed_learn * input_outside;
 }
