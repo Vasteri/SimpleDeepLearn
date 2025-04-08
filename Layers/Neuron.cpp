@@ -12,8 +12,7 @@ void Neuron::init_weights(){
 }
 
 
-Neuron::Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outside){
-    Layer();
+Neuron::Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outside): Layer(){
     this->trainable = trainable_outside;
     this->input_shape = prev_layer_outside->get_output_shape();
     this->output_shape = count_neurons;
@@ -36,7 +35,7 @@ void Neuron::summary(){
 }
 
 
-Matrix<double>  Neuron::forward_propagation(Matrix<double>& input_outside){
+Matrix<double> Neuron::forward_propagation(Matrix<double>& input_outside){
     //std::cout << "Neuron:forward\n";
     this->input = input_outside;
     Matrix<double> result = input * weights + displacement;

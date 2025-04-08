@@ -1,3 +1,4 @@
+#include <cmath>
 #include "matrix.cpp"
 
 int main() {
@@ -86,7 +87,7 @@ int main() {
     int dims = A.GetDims(0);
     dims = 0;
     A.print_info();
-    (A + B + C * D - M).print_mat("Hard:\n");
+    (A + B + C * D - M * N).print_mat("Hard:\n");
     /*
     std::printf("Test +=\n");
     A.print_mat("A:\n");
@@ -123,6 +124,11 @@ int main() {
     std::cout << vector_T << "? " << vector_T.T();
     vector_T.print_info();
     vector_T.T().print_info();
+
+    std::cout << "D:\n" << D << "D(tah):\n" << D.ApplyFunctionForEach(tanh) << "D:\n" << D;
+
+
+    std::cout << "A:\n" << A << "B:\n" << B << "A ** B:\n" << ElementWiseMultiplication(A, B);
 
     return 0;
 }

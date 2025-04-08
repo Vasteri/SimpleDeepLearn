@@ -1,5 +1,3 @@
-
-
 class Layer {
     protected:
         int   input_shape;

@@ -9,29 +9,44 @@ std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
 
 
 Model* make_model() {
+    Layer* x;
     Input* input = new Input(2);
-    Neuron* x1 = new Neuron(4, input);
-    Neuron* x2 = new Neuron(1, x1);
-    Model* model = new Model(input, x2);
+    x = new Neuron(4, input);
+    x = new Neuron(1, x);
+    Model* model = new Model(input, x);
+    model->compile();
+    return model;
+}
+
+Model* make_model2() {
+    Layer* x;
+    Input* input = new Input(2);
+    x = new Neuron(10, input);
+    x = new Activation("tanh", x);
+    x = new Neuron(1, x);
+    Model* model = new Model(input, x);
     model->compile();
     return model;
 }
 
 
+void fit(Model* model, unsigned int n, std::vector<std::vector<double>>& x, std::vector<std::vector<double>>& y_true){
+    std::vector<double> y_pred;
+    for (unsigned int i = 0; i < n; i++){
+        y_pred = model->forward_propagation(x[i]);
+        if ((i % 100) == 0)
+            std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0];
+        model->backward_propagation(y_pred, y_true[i]);
+        if ((i % 100) == 0)
+           std::cout << " -> " << (model->forward_propagation(x[i]))[0] << std::endl;
+    }
+    std::cout << "End fit\n";
+}
+
+
 int main(){
-    Layer::speed_learn = 0.003;
-    Model* model = make_model();
-    model->summary();
-
-    std::vector<double> input_vector;
-    input_vector.push_back(1);
-    input_vector.push_back(5);
-
-    std::vector<double> result_vector = model->forward_propagation(input_vector);
-    std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector << std::endl;
-
-
-    const int n = 1000;
+    // prepare data
+    const int n = 10000;
     std::vector<std::vector<double>> x(n), y_true(n);
     int a, b;
     double r;
@@ -40,22 +55,9 @@ int main(){
         b = std::rand() % 6;
         x[i].push_back(a);
         x[i].push_back(b);
-        r = 7.0 * a - 2.0 * (double)(b) + 7.0;
+        r = -7.0 * a - 2.0 * (double)(b) + 7.0;
         y_true[i].push_back(r);
     }
-
-    std::vector<double> y_pred;
-    for (unsigned int i = 0; i < n; i++){
-        //if (!(x[i][0] == 0 && x[i][1] == 1)) {
-        y_pred = model->forward_propagation(x[i]);
-        std::cout << i << ": x:";
-        std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0];
-        model->backward_propagation(y_pred, y_true[i]);
-        std::cout << " -> " << (model->forward_propagation(x[i]))[0] << std::endl;
-        //}
-    }
-
-    std::cout << "Test:" << std::endl;
     std::vector<std::vector<double>> test(4);
     test[0].push_back(0);
     test[0].push_back(0);
@@ -65,8 +67,37 @@ int main(){
     test[2].push_back(1);
     test[3].push_back(1);
     test[3].push_back(1);
+
+
+    Model* model  = make_model();
+    Model* model2 = make_model2();
+    model->summary();
+
+    // test forward propagation
+    std::vector<double> input_vector;
+    input_vector.push_back(1);
+    input_vector.push_back(5);
+    std::vector<double> result_vector = model->forward_propagation(input_vector);
+    std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector << std::endl;
+
+    
+    try {
+    Layer::speed_learn = 0.003;
+    fit(model, 1000, x, y_true);
+    //Layer::speed_learn = 0.01;
+    fit(model2, 1000000, x, y_true);
+    }
+    catch(std::bad_alloc &e){
+        std::cout << "-------"  << "++++";
+    }
+
+    std::cout << "Test1:" << std::endl;
     for (unsigned int i = 0; i < 4; i++){
-        std::cout << i << ": " << model->forward_propagation(test[i]) << std::endl;
+        std::cout << i << ": " << model->forward_propagation(test[i]);
+    }
+    std::cout << "Test2:" << std::endl;
+    for (unsigned int i = 0; i < 4; i++){
+        std::cout << i << ": " << model2->forward_propagation(test[i]);
     }
 
 
@@ -88,5 +119,6 @@ int main(){
     */
 
     delete model;
+    delete model2;
     return 0;
 }

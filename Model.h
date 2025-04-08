@@ -1,9 +1,11 @@
 #include <vector>
 #include <string.h>
 #include "Matrix/Matrix.cpp"
+#include "Functions/LossFun.cpp"
+#include "Functions/Activations.cpp"
 #include "Layers/Input.cpp"
 #include "Layers/Neuron.cpp"
-#include "LossFun.cpp"
+#include "Layers/Activation.cpp"
 
 class Model {
     private:

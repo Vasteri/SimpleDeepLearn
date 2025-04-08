@@ -170,6 +170,28 @@ Matrix<Type> Matrix<Type>::T(){
 
 
 template <typename Type>
+Matrix<Type> Matrix<Type>::ApplyFunctionForEach(Type (*function)(Type)){
+    Matrix<Type> result(*this);
+    for (int i = 0; i < memory; i++){
+        result.mat[i] = function(mat[i]);
+    }
+    return result;
+}
+
+
+template <typename Type>
+Matrix<Type> ElementWiseMultiplication(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
+    if (mat1.memory != mat2.memory)
+        throw MatrixException("Count elements in ElementWiseMultiplication is not equal");
+    Matrix<Type> result(mat1);
+    for (int i = 0; i < mat1.memory; i++){
+        result.mat[i] = mat1.mat[i] * mat2.mat[i];
+    }
+    return result;
+}
+
+
+template <typename Type>
 void Matrix<Type>::print_mat(const char* out) {
     printf(out);
     if (dim == 1){
@@ -200,6 +222,9 @@ Matrix<Type> Matrix<Type>::operator - (){
 
 template <typename Type>
 Type& Matrix<Type>::operator[](const int id) const{
+    if (id < 0 || id > memory){
+        throw MatrixException("Incorrect index");
+    }
     return *(mat + id);
 }
 
@@ -314,6 +339,15 @@ Matrix<Type> operator *(const Matrix<Type>& mat2, const Type element){
 }
 
 
+template <typename Type> 
+Matrix<Type> operator / (const Matrix<Type>& mat2, const Type element){
+    Matrix<Type> res(mat2);
+    for (int i = 0; i < res.GetMemory(); i++)
+        res[i] /= element;
+    return res;
+}
+
+
 template <typename Type>
 Matrix<Type> operator +(const Type element, const Matrix<Type>& mat2){
     return mat2 + element; 
@@ -331,6 +365,14 @@ Matrix<Type> operator *(const Type element, const Matrix<Type>& mat2){
     return mat2 * element;
 }
 
+
+template <typename Type> 
+Matrix<Type> operator / (const Type element, const Matrix<Type>& mat2){
+    Matrix<Type> res(mat2);
+    for (int i = 0; i < res.GetMemory(); i++)
+        res[i] = element / res[i];
+    return res;
+}
 
 /*
 template <typename Type>
