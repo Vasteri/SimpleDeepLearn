@@ -1,4 +1,7 @@
-#include "Model.cpp"
+#include "Matrix/Matrix.cpp"
+#include "DeepLearn/Model.cpp"
+
+
 
 std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
     for (unsigned int i = 0; i < mas.size(); i++)
@@ -8,10 +11,20 @@ std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
 }
 
 
+Model* make_model0() {
+    Layer* x;
+    Input* input = new Input(2);
+    x = new Neuron(1, input);
+    Model* model = new Model(input, x);
+    model->compile();
+    return model;
+}
+
+
 Model* make_model() {
     Layer* x;
     Input* input = new Input(2);
-    x = new Neuron(4, input);
+    x = new Neuron(10, input);
     x = new Neuron(1, x);
     Model* model = new Model(input, x);
     model->compile();
@@ -23,6 +36,19 @@ Model* make_model2() {
     Input* input = new Input(2);
     x = new Neuron(10, input);
     x = new Activation("tanh", x);
+    x = new Neuron(1,  x);
+    Model* model = new Model(input, x);
+    model->compile();
+    return model;
+}
+
+Model* make_model3() {
+    Layer* x;
+    Input* input = new Input(2);
+    x = new Neuron(10, input);
+    x = new Activation("tanh", x);
+    x = new Neuron(10, x);
+    x = new Activation("tanh", x);
     x = new Neuron(1, x);
     Model* model = new Model(input, x);
     model->compile();
@@ -30,34 +56,28 @@ Model* make_model2() {
 }
 
 
-void fit(Model* model, unsigned int n, std::vector<std::vector<double>>& x, std::vector<std::vector<double>>& y_true){
-    std::vector<double> y_pred;
-    for (unsigned int i = 0; i < n; i++){
-        y_pred = model->forward_propagation(x[i]);
-        if ((i % 100) == 0)
-            std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0];
-        model->backward_propagation(y_pred, y_true[i]);
-        if ((i % 100) == 0)
-           std::cout << " -> " << (model->forward_propagation(x[i]))[0] << std::endl;
-    }
-    std::cout << "End fit\n";
+void grapf(){
+
 }
 
 
 int main(){
-    // prepare data
-    const int n = 10000;
+    // prepare learning data
+    const int n = 100000;
     std::vector<std::vector<double>> x(n), y_true(n);
     int a, b;
     double r;
     for (unsigned int i = 0; i < n; i++){
-        a = std::rand() % 6;
-        b = std::rand() % 6;
+        a = std::rand() % 5;
+        b = std::rand() % 5;
         x[i].push_back(a);
         x[i].push_back(b);
         r = -7.0 * a - 2.0 * (double)(b) + 7.0;
         y_true[i].push_back(r);
     }
+
+    
+    // prepate test data
     std::vector<std::vector<double>> test(4);
     test[0].push_back(0);
     test[0].push_back(0);
@@ -69,8 +89,10 @@ int main(){
     test[3].push_back(1);
 
 
+    Model* model0 = make_model0();
     Model* model  = make_model();
     Model* model2 = make_model2();
+    Model* model3 = make_model3();
     model->summary();
 
     // test forward propagation
@@ -81,16 +103,18 @@ int main(){
     std::cout << "Input vec: \n" << input_vector << "Result:\n" << result_vector << std::endl;
 
     
-    try {
-    Layer::speed_learn = 0.003;
-    fit(model, 1000, x, y_true);
-    //Layer::speed_learn = 0.01;
-    fit(model2, 1000000, x, y_true);
-    }
-    catch(std::bad_alloc &e){
-        std::cout << "-------"  << "++++";
-    }
+    Layer::speed_learn = 0.005; //0.003
+    model0 ->fit_chaotic(x, y_true);
+    model  ->fit_chaotic(x, y_true);
+    Layer::speed_learn = 0.005;
+    model2 ->fit_chaotic(x, y_true);
+    model3 ->fit_chaotic(x, y_true);
 
+
+    std::cout << "Test0:" << std::endl;
+    for (unsigned int i = 0; i < 4; i++){
+        std::cout << i << ": " << model0->forward_propagation(test[i]);
+    }
     std::cout << "Test1:" << std::endl;
     for (unsigned int i = 0; i < 4; i++){
         std::cout << i << ": " << model->forward_propagation(test[i]);
@@ -99,9 +123,11 @@ int main(){
     for (unsigned int i = 0; i < 4; i++){
         std::cout << i << ": " << model2->forward_propagation(test[i]);
     }
+    std::cout << "Test3:" << std::endl;
+    for (unsigned int i = 0; i < 4; i++){
+        std::cout << i << ": " << model3->forward_propagation(test[i]);
+    }
 
-
-    std::cout << std::rand() % 2 << std::rand() % 2 << std::endl;
 
     /*
     int A1[] = {1, 2};
@@ -117,8 +143,11 @@ int main(){
 
     std::cout << "Input mat: \n" << input << "Result:\n" << result;
     */
-
+    model0->view_weigth();
+    std::cout << "True weigth: -7, -2, 7" << std::endl;
+    delete model0;
     delete model;
     delete model2;
+    delete model3;
     return 0;
 }

@@ -28,9 +28,28 @@ Matrix<Type>::Matrix(int argc, int argv[]) {
     }
 
     mat = new Type[memory];
-    for (i = 0; i < memory; i++) {
+    for (i = 0; i < memory; i++) 
         { mat[i] = 0; }  //i * n + j
+    
+}
+
+
+template <typename Type>
+Matrix<Type>::Matrix(int argc, int argv[], Type elem) {
+    //std::printf("New\n");
+    int i;
+    dim = argc;
+    memory = 1;
+    dims = new int[dim];
+    for (i = 0; i < dim; i++) {
+        dims[i] = argv[i];
+        memory *= argv[i];
     }
+
+    mat = new Type[memory];
+    for (i = 0; i < memory; i++) 
+        { mat[i] = elem; }  //i * n + j
+    
 }
 
 

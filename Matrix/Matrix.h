@@ -8,6 +8,7 @@ class Matrix {
     public:
         Matrix();
         Matrix(int argc, int argv[]);
+        Matrix(int argc, int argv[], Type elem);
 
         ~Matrix();
         Matrix(const Matrix& mat2);    // copy
@@ -15,9 +16,9 @@ class Matrix {
         Matrix<Type> operator =(const Matrix& mat2); // copy assignment
         Matrix<Type> operator =(Matrix&& mat2);      // move assignment
 
-        int  GetDim()    const;
-        int GetDims(const int id)   const;
-        int  GetMemory() const;
+        int  GetDim()              const;
+        int  GetDims(const int id) const;
+        int  GetMemory()           const;
         void print_mat(const char* out = "");
         void print_info();
 
