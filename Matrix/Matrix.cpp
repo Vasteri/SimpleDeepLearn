@@ -164,6 +164,16 @@ void Matrix<Type>::print_info() {
 
 
 template <typename Type>
+Type Matrix<Type>::Mean(){
+    Type res = 0;
+    for (int i = 0; i < memory; i++){
+        res += mat[i];
+    }
+    return res / memory;
+}
+
+
+template <typename Type>
 Matrix<Type> Matrix<Type>::T(){
     if (dim == 1){
         int A1[] = {1, dims[0]};
@@ -298,11 +308,11 @@ Matrix<Type> operator*(const Matrix<Type>& mat1, const Matrix<Type>& mat2){
         throw MatrixException("Much more dims");
     if (mat1.dim == 1){
         if (1 != mat2.dims[0]) 
-            throw MatrixException("Incorrect dims");
+            throw MatrixException("Incorrect dims in mupliply");
     }
     else {
         if (mat1.dims[1] != mat2.dims[0]) 
-            throw MatrixException("Incorrect dims");
+            throw MatrixException("Incorrect dims in mupliply");
     }
     int m = mat1.dims[0];
     int s = mat2.dims[0];

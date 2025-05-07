@@ -3,11 +3,11 @@
 void Neuron::init_weights(){
     for (int i = 0; i < (input_shape); i++){
         for (int j = 0; j < output_shape; j++){
-            weights[i * (output_shape) + j] = 0.5;
+            weights[i * (output_shape) + j] = (std::rand() % 100 + 1) / 101.;
         }
     }
     for (int i = 0; i < output_shape; i++){
-        displacement[i] = 0.5;
+        displacement[i] = (std::rand() % 100 + 1) / 101.;
     }
 }
 
@@ -51,8 +51,7 @@ Matrix<double> Neuron::forward_propagation(Matrix<double>& input_outside){
         int dims[] = {input.GetDims(0), 1};
         this->ones = Matrix<double>(2, dims, 1);
     }
-
-    Matrix<double> result = input * weights + ones.T() * displacement;
+    Matrix<double> result = input * weights + ones * displacement;
 
     if (next_layer != nullptr)
         return next_layer->forward_propagation(result);
@@ -71,7 +70,7 @@ void Neuron::backward_propagation(Matrix<double>& input_outside){
     
     //std::cout << "Before:\n" << weights << displacement << std::endl;
     weights = weights - speed_learn * ((this->input).T() * input_outside) / (double)(this->input).GetDims(0);
-    displacement = displacement   -   speed_learn * ones * input_outside  / (double)(this->input).GetDims(0);
+    displacement = displacement - speed_learn * ones.T() * input_outside  / (double)(this->input).GetDims(0);
     //std::cout << "After:\n" << weights << displacement << std::endl;
     
 }

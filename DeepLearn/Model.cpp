@@ -61,11 +61,24 @@ std::vector<double> Model::matrix_to_vector(const Matrix<double>& input_matrix){
 }
 
 
+Matrix<double> Model::prepare_batch(std::vector<std::vector<double>>& x, int batch_size, int start){
+    int n = (int)(x[0].size());
+    int A1[] = {batch_size, n};
+    Matrix<double> res(2, A1);
+    for (int i = 0; i < batch_size; i++){
+        for (int j = 0; j < n; j++){
+            res[i * n + j] = x[(unsigned int)(start + i)][(unsigned int)(j)];
+        }
+    }
+    return res;
+}
+
+
 Matrix<double> Model::forward_propagation(Matrix<double> input_matrix){
     //std::cout << "Model:forward\n";
     if (!compiled)
         throw Model::Exception();
-    if (input_matrix.GetMemory() != input_layer->get_input_shape())
+    if ((input_matrix.GetMemory() % input_layer->get_input_shape()) != 0)
         throw Model::Exception();
     
     forward_prop = true;
@@ -106,19 +119,25 @@ std::vector<double> Model::fit_chaotic(std::vector<std::vector<double>>& x, std:
         throw Model::Exception();
     else if (x.size() != y_true.size())
         throw Model::Exception();
-    else if (n == 0 || n > x.size())
+    else if (n == 0 || n > (int)(x.size()))
         n = (int)x.size();
-    const unsigned int count_batch = n / batch_size;
+    const int batch_count = n / batch_size;
     
-    std::vector<double> y_pred, history;
-    for (unsigned int i = 0; i < count_batch; i++){
-        y_pred = forward_propagation(x[i]);
-        backward_propagation(y_pred, y_true[i]);
-        history.push_back(loss_function(vector_to_matrix(y_pred), vector_to_matrix(y_true[i])));
-        if ((i % 1000) == 0 || (i / 10 == 0)) {
-            std::cout << i << ": " << y_pred[0] - y_true[i][0] << " " << y_true[i][0] << " " << y_pred[0];
-            std::cout << " -> " << (forward_propagation(x[i]))[0] << std::endl;
+    std::vector<double> history;
+    Matrix<double> x_batch, y_pred_batch, y_true_batch;
+    for (int i = 0; i < batch_count; i++){
+        x_batch      = prepare_batch(x,      batch_size, i * batch_size);
+        y_true_batch = prepare_batch(y_true, batch_size, i * batch_size);
+        y_pred_batch  = forward_propagation(x_batch);
+        backward_propagation(y_pred_batch, y_true_batch);
+
+        history.push_back(loss_function(y_pred_batch, y_true_batch).Mean());
+
+        if (((i * batch_size) % 1000) == 0 || (i / 10 == 0)) {
+            std::cout << i << ": " << history[(unsigned int)(i)] << std::endl;
+            //std::cout << " -> " << (forward_propagation(x[i]))[0] << std::endl;
         }
+        
     }
     std::cout << "End fit\n";
     return history;

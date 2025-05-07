@@ -1,11 +1,9 @@
 
 
-double MSE(Matrix<double> y_pred, Matrix<double> y_true){
-    Matrix<double> temp = y_pred - y_true;
-    double result = 0;
-    for (int i = 0; i < temp.GetDims(1); i++)
-        result += (temp[i] * temp[i]);
-    return result / temp.GetDims(1);
+Matrix<double> MSE(Matrix<double> y_pred, Matrix<double> y_true){
+    int A1[] = {y_pred.GetDims(1)};
+    Matrix<double> ones = Matrix<double>(1, A1, 1);
+    return (y_pred - y_true) * ones;
 }
 
 

@@ -22,6 +22,7 @@ class Matrix {
         void print_mat(const char* out = "");
         void print_info();
 
+        Type Mean();
         Matrix<Type> T();
         Matrix<Type> ApplyFunctionForEach(Type (*function)(Type));
         template <typename Type2> friend Matrix<Type2> ElementWiseMultiplication(const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
