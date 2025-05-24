@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "Matrix.h"
+#include "Matrix.hpp"
 
 template <typename Type>
 Matrix<Type>::Matrix() {

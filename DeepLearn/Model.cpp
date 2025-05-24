@@ -1,4 +1,4 @@
-#include "Model.h"
+#include "Model.hpp"
 
 Model::Model(Input* input_outside, Layer* output_outside){
     this->input_layer = input_outside;

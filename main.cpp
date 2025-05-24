@@ -1,5 +1,7 @@
 #include <vector>
 #include <iostream>
+#include "Matrix/Matrix.cpp"
+#include "DeepLearn/Model.cpp"
 
 std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
     for (unsigned int i = 0; i < mas.size(); i++)
@@ -7,11 +9,6 @@ std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
     os << std::endl;
     return os;
 }
-
-#include "Matrix/Matrix.cpp"
-#include "DeepLearn/Model.cpp"
-
-
 
 double approx_function(double a, double b){
     return (-7) * a + (-2) * b + (7);
@@ -28,7 +25,7 @@ Model* make_model0() {
 }
 
 
-Model* make_model() {
+Model* make_model1() {
     Layer* x;
     Input* input = new Input(2);
     x = new Neuron(10, input);
@@ -97,7 +94,7 @@ int main(){
 
 
     Model* model0 = make_model0();
-    Model* model1  = make_model();
+    Model* model1 = make_model1();
     Model* model2 = make_model2();
     Model* model3 = make_model3();
     model1->summary();

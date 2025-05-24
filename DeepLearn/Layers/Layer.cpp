@@ -1,5 +1,5 @@
 #pragma once
-#include "Layer.h"
+#include "Layer.hpp"
 
 
 double Layer::speed_learn = 0.5;

@@ -1,4 +1,4 @@
-#include "Neuron.h"
+#include "Neuron.hpp"
 
 void Neuron::init_weights(){
     for (int i = 0; i < (input_shape); i++){

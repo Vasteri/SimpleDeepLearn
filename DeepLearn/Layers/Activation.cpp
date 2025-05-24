@@ -1,4 +1,4 @@
-#include "Activation.h"
+#include "Activation.hpp"
 
 
 Activation::Activation(const char* type_function, Layer* prev_layer_outside): Layer(){

@@ -1,4 +1,4 @@
-#include "Input.h"
+#include "Input.hpp"
 
 Input::Input(int input_shape_neurons): Layer(){
     this->input_shape  = input_shape_neurons;
