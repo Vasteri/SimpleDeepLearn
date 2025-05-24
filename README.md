@@ -17,7 +17,7 @@
 SimpleDeepLearn/
 ├───DeepLearn/
 │   │   Model.cpp
-│   │   Model.h
+│   │   Model.hpp
 │   │
 │   ├───Functions/
 │   │       Activations.cpp
@@ -25,17 +25,17 @@ SimpleDeepLearn/
 │   │
 │   └───Layers/
 │           Activation.cpp
-│           Activation.h
+│           Activation.hpp
 │           Input.cpp
-│           Input.h
+│           Input.hpp
 │           Layer.cpp
-│           Layer.h
+│           Layer.hpp
 │           Neuron.cpp
-│           Neuron.h
+│           Neuron.hpp
 │
 └───Matrix/
 |   │   Matrix.cpp
-|   │   Matrix.h
+|   │   Matrix.hpp
 |   │   test_mat.cpp
 |    main.cpp
 ````
@@ -51,6 +51,8 @@ SimpleDeepLearn/
 
 ```bash
 git clone https://github.com/Vasteri/SimpleDeepLearn
+cd SimpleDeepLearn
+mkdir build\Debug
 g++ .\main.cpp -o .\build\Debug\outDebug.exe
 .\build\Debug\outDebug.exe
 ````

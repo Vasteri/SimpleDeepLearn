@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <string.h>
 #include "Matrix/Matrix.cpp"
 #include "DeepLearn/Model.cpp"
 
