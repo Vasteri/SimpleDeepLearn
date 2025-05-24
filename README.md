@@ -44,10 +44,10 @@ SimpleDeepLearn/
 
 ### Требования
 
-- Компилятор с поддержкой C++11 или выше
+- Компилятор с поддержкой C++11 
 - g++
 
-### Команды
+### Команды установки и запуска примера
 
 ```bash
 git clone https://github.com/Vasteri/SimpleDeepLearn
