@@ -40,10 +40,9 @@ void Neuron::view_weigth() {
 }
 
 Matrix<double> Neuron::forward_propagation(Matrix<double>& input_outside) {
-    // std::cout << "Neuron:forward\n";
     this->input = input_outside;
     if (ones.GetDims(0) != input.GetDims(0)) {
-        int dims[] = {input.GetDims(0), 1};
+        const int dims[] = {input.GetDims(0), 1};
         this->ones = Matrix<double>(2, dims, 1);
     }
     Matrix<double> result = input * weights + ones * displacement;
@@ -55,15 +54,11 @@ Matrix<double> Neuron::forward_propagation(Matrix<double>& input_outside) {
 }
 
 void Neuron::backward_propagation(Matrix<double>& input_outside) {
-    // std::cout << "Neuron:backward\n";
-
     if (prev_layer != nullptr) {
         Matrix<double> result = input_outside * weights.T();
         prev_layer->backward_propagation(result);
     }
 
-    // std::cout << "Before:\n" << weights << displacement << std::endl;
     weights = weights - speed_learn * ((this->input).T() * input_outside) / (double)(this->input).GetDims(0);
     displacement = displacement - speed_learn * ones.T() * input_outside / (double)(this->input).GetDims(0);
-    // std::cout << "After:\n" << weights << displacement << std::endl;
 }

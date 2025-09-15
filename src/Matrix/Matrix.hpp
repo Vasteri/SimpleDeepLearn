@@ -13,8 +13,8 @@ class Matrix {
 
    public:
     Matrix();
-    Matrix(int argc, int argv[]);
-    Matrix(int argc, int argv[], Type elem);
+    Matrix(int argc, const int* argv);
+    Matrix(int argc, const int* argv, Type elem);
 
     ~Matrix();
     Matrix(const Matrix& mat2);                  // copy
@@ -25,16 +25,16 @@ class Matrix {
     int GetDim() const;
     int GetDims(const int id) const;
     int GetMemory() const;
-    void print_mat(const char* out = "");
-    void print_info();
+    void print_mat(const char* out = "") const;
+    void print_info() const;
 
-    Type Mean();
-    Matrix<Type> T();
-    Matrix<Type> ApplyFunctionForEach(Type (*function)(Type));
+    Type Mean() const;
+    Matrix<Type> T() const;
+    Matrix<Type> ApplyFunctionForEach(Type (*function)(const Type)) const;
     template <typename Type2>
     friend Matrix<Type2> ElementWiseMultiplication(const Matrix<Type2>& mat1, const Matrix<Type2>& mat2);
 
-    Matrix<Type> operator-();
+    Matrix<Type> operator-() const;
     Type& operator[](const int id) const;
     template <typename Type2>
     friend std::ostream& operator<<(std::ostream& os, const Matrix<Type2>& mat);
@@ -75,7 +75,7 @@ class MatrixException {
     std::string message;
 
    public:
-    MatrixException(const std::string input_message) : message{input_message} {}
+    explicit MatrixException(const std::string& input_message) : message{input_message} {}
     std::string getMessage() const { return message; }
 };
 

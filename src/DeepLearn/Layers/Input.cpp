@@ -20,10 +20,7 @@ void Input::view_weigth() {
 }
 
 Matrix<double> Input::forward_propagation(Matrix<double>& input_neurons) {
-    // std::cout << "Input:forward\n";
     return next_layer->forward_propagation(input_neurons);
 }
 
-void Input::backward_propagation(Matrix<double>& /*input_neurons*/) {
-    // std::cout << "Input:backward\n";
-}
+void Input::backward_propagation(Matrix<double>& /*input_neurons*/) {}

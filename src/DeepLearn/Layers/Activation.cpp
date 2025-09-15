@@ -25,7 +25,6 @@ void Activation::summary() {
 }
 
 Matrix<double> Activation::forward_propagation(Matrix<double>& input_outside) {
-    // std::cout << "Activation:forward\n";
     this->input = input_outside;
     Matrix<double> result = function_activation(input);
 
@@ -36,14 +35,8 @@ Matrix<double> Activation::forward_propagation(Matrix<double>& input_outside) {
 }
 
 void Activation::backward_propagation(Matrix<double>& input_outside) {
-    // std::cout << "Activation:backward\n";
     if (prev_layer != nullptr) {
         Matrix<double> result = ElementWiseMultiplication(differential_function_activation(input), input_outside);
-        // std::cout << "Forward:\n" << input << function_activation(input);
-        // std::cout << "Backward:\n" << input_outside << result;
-        // std::cout << input << input.ApplyFunctionForEach(cosh) <<
-        // ((input.ApplyFunctionForEach(cosh)).ApplyFunctionForEach(pow2)) << 1.0 /
-        // ((input.ApplyFunctionForEach(cosh)).ApplyFunctionForEach(pow2)) << std::endl;
         prev_layer->backward_propagation(result);
     }
 }

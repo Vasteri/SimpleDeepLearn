@@ -5,12 +5,11 @@ Model::Model(Input* input_outside, Layer* output_outside) {
     this->output_layer = output_outside;
     compiled = false;
     forward_prop = false;
+    loss_function = nullptr;
+    grad_loss_function = nullptr;
 }
 
-Model::~Model() {
-    // std::cout << "delete Model\n";
-    delete input_layer;
-}
+Model::~Model() { delete input_layer; }
 
 void Model::compile(const char* loss) {
     if (strcmp(loss, "mse") == 0) {
@@ -25,14 +24,14 @@ void Model::compile(const char* loss) {
 }
 
 void Model::summary() {
-    std::cout << "Model" << std::endl;
+    cout << "Model" << endl;
     if (input_layer != nullptr) {
         input_layer->summary();
     }
-    std::cout << "Output: " << output_layer->get_output_shape() << std::endl;
+    cout << "Output: " << output_layer->get_output_shape() << endl;
 }
 
-Matrix<double> Model::vector_to_matrix(const std::vector<double>& input_vector) {
+Matrix<double> Model::vector_to_matrix(const vector<double>& input_vector) {
     unsigned int n = input_vector.size();
     int A1[] = {1, (int)(n)};
 
@@ -41,13 +40,13 @@ Matrix<double> Model::vector_to_matrix(const std::vector<double>& input_vector) 
     return result;
 }
 
-std::vector<double> Model::matrix_to_vector(const Matrix<double>& input_matrix) {
-    std::vector<double> result_vector;
+vector<double> Model::matrix_to_vector(const Matrix<double>& input_matrix) {
+    vector<double> result_vector;
     for (int i = 0; i < input_matrix.GetMemory(); i++) result_vector.push_back(input_matrix[i]);
     return result_vector;
 }
 
-Matrix<double> Model::prepare_batch(std::vector<std::vector<double>>& x, int batch_size, int start) {
+Matrix<double> Model::prepare_batch(const vector<vector<double>>& x, int batch_size, int start) {
     int n = (int)(x[0].size());
     int A1[] = {batch_size, n};
     Matrix<double> res(2, A1);
@@ -60,7 +59,6 @@ Matrix<double> Model::prepare_batch(std::vector<std::vector<double>>& x, int bat
 }
 
 Matrix<double> Model::forward_propagation(Matrix<double> input_matrix) {
-    // std::cout << "Model:forward\n";
     if (!compiled) throw Model::Exception();
     if ((input_matrix.GetMemory() % input_layer->get_input_shape()) != 0) throw Model::Exception();
 
@@ -69,7 +67,7 @@ Matrix<double> Model::forward_propagation(Matrix<double> input_matrix) {
     return input_layer->forward_propagation(input_matrix);
 }
 
-std::vector<double> Model::forward_propagation(std::vector<double> input_vector) {
+vector<double> Model::forward_propagation(const vector<double>& input_vector) {
     Matrix<double> result_matrix = this->forward_propagation(vector_to_matrix(input_vector));
     return matrix_to_vector(result_matrix);
 }
@@ -84,12 +82,12 @@ void Model::backward_propagation(Matrix<double> y_pred, Matrix<double> y_true) {
     output_layer->backward_propagation(grad_loss);
 }
 
-void Model::backward_propagation(std::vector<double> y_pred_vector, std::vector<double> y_true_vector) {
+void Model::backward_propagation(const vector<double>& y_pred_vector, const vector<double>& y_true_vector) {
     this->backward_propagation(vector_to_matrix(y_pred_vector), vector_to_matrix(y_true_vector));
 }
 
-std::vector<double> Model::fit_chaotic(std::vector<std::vector<double>>& x, std::vector<std::vector<double>>& y_true,
-                                       int batch_size, int n) {
+vector<double> Model::fit_chaotic(const vector<vector<double>>& x, const vector<vector<double>>& y_true, int batch_size,
+                                  int n) {
     if (x.size() < (unsigned int)n)
         throw Model::Exception();
     else if (x.size() != y_true.size())
@@ -98,7 +96,7 @@ std::vector<double> Model::fit_chaotic(std::vector<std::vector<double>>& x, std:
         n = (int)x.size();
     const int batch_count = n / batch_size;
 
-    std::vector<double> history;
+    vector<double> history;
     Matrix<double> x_batch, y_pred_batch, y_true_batch;
     for (int i = 0; i < batch_count; i++) {
         x_batch = prepare_batch(x, batch_size, i * batch_size);
@@ -109,15 +107,14 @@ std::vector<double> Model::fit_chaotic(std::vector<std::vector<double>>& x, std:
         history.push_back(loss_function(y_pred_batch, y_true_batch).Mean());
 
         if (((i * batch_size) % 1000) == 0 || (i / 10 == 0)) {
-            std::cout << i << ": " << history[(unsigned int)(i)] << "                   \r";
-            // std::cout << " -> " << (forward_propagation(x[i]))[0] << std::endl;
+            cout << i << ": " << history[(unsigned int)(i)] << "                   \r";
         }
     }
-    std::cout << std::endl << "End fit\n";
+    cout << endl << "End fit\n";
     return history;
 }
 
 void Model::view_weigth() {
-    std::cout << "Weigth:" << std::endl;
+    cout << "Weigth:" << endl;
     input_layer->view_weigth();
 }

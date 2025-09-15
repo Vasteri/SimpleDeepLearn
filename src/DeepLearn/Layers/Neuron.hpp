@@ -8,7 +8,7 @@ class Neuron : public Layer {
     Matrix<double> ones;
 
    public:
-    Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outside = true);
+    explicit Neuron(int count_neurons, Layer* prev_layer_outside, bool trainable_outside = true);
     virtual void summary() override;
     virtual void view_weigth() override;
     virtual Matrix<double> forward_propagation(Matrix<double>& input_outside) override;

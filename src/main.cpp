@@ -53,7 +53,7 @@ Model* make_model3() {
     return model;
 }
 
-//void grapf() {}
+// void grapf() {}
 
 int main() {
     // prepare learning data
@@ -122,6 +122,7 @@ int main() {
 
     std::cout << "True weigth: " << approx_function(0, 0) << " " << approx_function(1, 0) << " "
               << approx_function(0, 1) << std::endl;
+    model0->view_weigth();
     model2->view_weigth();
     delete model0;
     delete model1;

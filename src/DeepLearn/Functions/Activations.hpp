@@ -2,7 +2,7 @@
 
 #include "../../Matrix/Matrix.hpp"
 
-Matrix<double> tanh(Matrix<double>& x);
-Matrix<double> differential_tanh(Matrix<double>& x);
+Matrix<double> tanh(const Matrix<double>& x);
+Matrix<double> differential_tanh(const Matrix<double>& x);
 
-double pow2(double x);
+double pow2(const double x);

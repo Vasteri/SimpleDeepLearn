@@ -2,10 +2,7 @@
 
 double Layer::speed_learn = 0.5;
 
-Layer::~Layer() {
-    // std::cout << "delete Layer\n";
-    delete next_layer;
-}
+Layer::~Layer() { delete next_layer; }
 
 int Layer::get_input_shape() { return input_shape; }
 

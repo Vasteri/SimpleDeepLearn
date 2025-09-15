@@ -2,7 +2,6 @@
 
 template <typename Type>
 Matrix<Type>::Matrix() {
-    // std::printf("New\n");
     dim = 1;
     memory = 1;
     dims = new int[dim];
@@ -13,8 +12,7 @@ Matrix<Type>::Matrix() {
 }
 
 template <typename Type>
-Matrix<Type>::Matrix(int argc, int argv[]) {
-    // std::printf("New\n");
+Matrix<Type>::Matrix(int argc, const int* argv) {
     int i;
     dim = argc;
     memory = 1;
@@ -31,8 +29,7 @@ Matrix<Type>::Matrix(int argc, int argv[]) {
 }
 
 template <typename Type>
-Matrix<Type>::Matrix(int argc, int argv[], Type elem) {
-    // std::printf("New\n");
+Matrix<Type>::Matrix(int argc, const int* argv, Type elem) {
     int i;
     dim = argc;
     memory = 1;
@@ -50,14 +47,12 @@ Matrix<Type>::Matrix(int argc, int argv[], Type elem) {
 
 template <typename Type>
 Matrix<Type>::~Matrix() {
-    // std::printf("Delete\n");
     delete[] dims;
     delete[] mat;
 }
 
 template <typename Type>
 Matrix<Type>::Matrix(const Matrix& mat2) {
-    // std::printf("Copy\n");
     int i;
     dim = mat2.dim;
     memory = mat2.memory;
@@ -74,7 +69,6 @@ Matrix<Type>::Matrix(const Matrix& mat2) {
 
 template <typename Type>
 Matrix<Type>::Matrix(Matrix&& mat2) {
-    // std::printf("Move\n");
     mat = mat2.mat;
     dims = mat2.dims;
     dim = mat2.dim;
@@ -140,7 +134,7 @@ int Matrix<Type>::GetMemory() const {
 }
 
 template <typename Type>
-void Matrix<Type>::print_info() {
+void Matrix<Type>::print_info() const {
     printf("Memory: %d\n", memory);
     printf("Dim: %d\n", dim);
     printf("Dims:");
@@ -151,7 +145,7 @@ void Matrix<Type>::print_info() {
 }
 
 template <typename Type>
-Type Matrix<Type>::Mean() {
+Type Matrix<Type>::Mean() const {
     Type res = 0;
     for (int i = 0; i < memory; i++) {
         res += mat[i];
@@ -160,7 +154,7 @@ Type Matrix<Type>::Mean() {
 }
 
 template <typename Type>
-Matrix<Type> Matrix<Type>::T() {
+Matrix<Type> Matrix<Type>::T() const {
     if (dim == 1) {
         int A1[] = {1, dims[0]};
         Matrix<Type> res(2, A1);
@@ -183,7 +177,7 @@ Matrix<Type> Matrix<Type>::T() {
 }
 
 template <typename Type>
-Matrix<Type> Matrix<Type>::ApplyFunctionForEach(Type (*function)(Type)) {
+Matrix<Type> Matrix<Type>::ApplyFunctionForEach(Type (*function)(const Type)) const {
     Matrix<Type> result(*this);
     for (int i = 0; i < memory; i++) {
         result.mat[i] = function(mat[i]);
@@ -202,7 +196,7 @@ Matrix<Type> ElementWiseMultiplication(const Matrix<Type>& mat1, const Matrix<Ty
 }
 
 template <typename Type>
-void Matrix<Type>::print_mat(const char* out) {
+void Matrix<Type>::print_mat(const char* out) const {
     printf("%s", out);
     if (dim == 1) {
         for (int i = 0; i < memory; i++) {
@@ -222,7 +216,7 @@ void Matrix<Type>::print_mat(const char* out) {
 }
 
 template <typename Type>
-Matrix<Type> Matrix<Type>::operator-() {
+Matrix<Type> Matrix<Type>::operator-() const {
     Matrix<Type> res = *this;
     for (int i = 0; i < memory; i++) {
         res[i] = -mat[i];
