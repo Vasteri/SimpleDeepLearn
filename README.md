@@ -14,14 +14,16 @@
 ## 📁 Структура проекта
 
 ```
-SimpleDeepLearn/
+SimpleDeepLearn/src/
 ├───DeepLearn/
 │   │   Model.cpp
 │   │   Model.hpp
 │   │
 │   ├───Functions/
 │   │       Activations.cpp
+│   │       Activations.hpp
 │   │       LossFun.cpp
+│   │       LossFun.hpp
 │   │
 │   └───Layers/
 │           Activation.cpp
@@ -38,23 +40,23 @@ SimpleDeepLearn/
 |   │   Matrix.hpp
 |   │   test_mat.cpp
 |    main.cpp
+|    Makefile
 ````
 
 ## 🚀 Сборка
 
 ### Требования
 
-- Компилятор с поддержкой C++11 
+- Компилятор с поддержкой C++17 
 - g++
+- Утилита make
 
 ### Команды установки и запуска примера
 
 ```bash
 git clone https://github.com/Vasteri/SimpleDeepLearn
-cd SimpleDeepLearn
-mkdir build\Debug
-g++ .\main.cpp -o .\build\Debug\outDebug.exe
-.\build\Debug\outDebug.exe
+cd SimpleDeepLearn/src
+make
 ````
 
 ## 📜 Лицензия

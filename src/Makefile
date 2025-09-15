@@ -1,4 +1,4 @@
-FLAGS=-Wall -Werror
+FLAGS=-Wall -Werror -Wextra
 
 all: rebuild
 
@@ -17,12 +17,19 @@ clean:
 	rm -rf ../build/*
 
 format:
-	clang-format -n * \
-	./Matrix/* \
-	./DeepLearn/* \
-	./DeepLearn/Functions/* \
-	./DeepLearn/Layers/*
+	clang-format -i main.cpp \
+	./Matrix/*.*pp \
+	./DeepLearn/*.*pp \
+	./DeepLearn/Functions/*.*pp \
+	./DeepLearn/Layers/*.*pp
 
+check:
+	cppcheck --enable=all --std=c++17 \
+	main.cpp \
+	./Matrix/*.cpp \
+	./DeepLearn/*.cpp \
+	./DeepLearn/Functions/*.cpp \
+	./DeepLearn/Layers/*.cpp
 
 ../build/test_mat.o:
 	g++ -c ./Matrix/test_mat.cpp -o ../build/test_mat.o

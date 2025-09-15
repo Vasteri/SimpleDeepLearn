@@ -15,43 +15,35 @@ int main() {
 
     std::printf("After malloc\n");
 
-
-    
-                        // A = E
-    int i, j;   
+    // A = E
+    int i, j;
     int mi;
-    if (m > n) 
+    if (m > n)
         mi = n;
-    else 
+    else
         mi = m;
-    for (i = 0; i < mi; i++){
+    for (i = 0; i < mi; i++) {
         A[i * mi + i] = 2;
         E[i * mi + i] = 1;
     }
 
-
-    for (i = 0; i < n; i++){
+    for (i = 0; i < n; i++) {
         X[i] = i + 1;
     }
-    
 
+    /*
+   for (i = 0; i < m; i++)
+       for (j = 0; j < n; j++)
+           A[i][j] = 0.0; //(double)(i + j);
+   */
 
-     /*
-    for (i = 0; i < m; i++) 
-        for (j = 0; j < n; j++) 
-            A[i][j] = 0.0; //(double)(i + j);
-    */
-
-    
     for (i = 0; i < n; i++)
-        for (j = 0; j < s; j++)
-            B[i * s + j] = i * s + j; //(double)(m * s - (i * s + j));
-    
+        for (j = 0; j < s; j++) B[i * s + j] = i * s + j;  //(double)(m * s - (i * s + j));
 
     std::printf("After initialization\n");
 
     std::printf("%f\n", A[1]);
-    
+
     Matrix<double> C = A + B;
     Matrix<double> D = A * B;
     Matrix<double> G = (A + B).T();
@@ -74,14 +66,13 @@ int main() {
     int B2[] = {2, 3};
     Matrix<double> M(2, B1);
     Matrix<double> N(2, B2);
-    for (i = 0; i < 6; i++){
+    for (i = 0; i < 6; i++) {
         M[i] = i + 1.5;
         N[i] = i + -6.3;
     }
     M.print_mat("M:\n");
     N.print_mat("N:\n");
     (M * N).print_mat("M * N:\n");
-    
 
     std::printf("Test dims\n");
     A.print_info();
@@ -96,7 +87,7 @@ int main() {
     A.print_mat("A+=A:\n");
     (A+=B).print_mat("2A += B:\n");
 
-    
+
     std::printf("Test *=\n");
     E.print_mat("E:\n");
     E *= E;
@@ -112,10 +103,6 @@ int main() {
     //(5 + E).print_mat("5 + E\n");
     std::printf("End\n");
 
-
-    int b;
-    std::cout << b << std::endl;
-
     std::cout << E + 1.0;
 
     Matrix<double> vector_T(1, B1);
@@ -127,7 +114,6 @@ int main() {
     vector_T.T().print_info();
 
     std::cout << "D:\n" << D << "D(tah):\n" << D.ApplyFunctionForEach(tanh) << "D:\n" << D;
-
 
     std::cout << "A:\n" << A << "B:\n" << B << "A ** B:\n" << ElementWiseMultiplication(A, B);
 
