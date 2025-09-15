@@ -1,3 +1,8 @@
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
+//#pragma once
+#include <iostream>
+
 template <typename Type>
 class Matrix {
     private:
@@ -61,3 +66,9 @@ class MatrixException
         MatrixException(std::string input_message): message{input_message}{}
         std::string getMessage() const {return message;}
 };
+
+//template class Matrix<double>;
+
+#include "Matrix.tpp"
+
+#endif

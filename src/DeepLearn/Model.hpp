@@ -1,10 +1,16 @@
+#pragma once
+
 #include <vector>
-#include <string.h>
-#include "Functions/LossFun.cpp"
-#include "Functions/Activations.cpp"
-#include "Layers/Input.cpp"
-#include "Layers/Neuron.cpp"
-#include "Layers/Activation.cpp"
+#include <iostream>
+#include <cstring>
+
+#include "../Matrix/Matrix.hpp"
+
+#include "Functions/LossFun.hpp"
+#include "Layers/Layer.hpp"
+#include "Layers/Input.hpp"
+#include "Layers/Neuron.hpp"
+#include "Layers/Activation.hpp"
 
 class Model {
     private:

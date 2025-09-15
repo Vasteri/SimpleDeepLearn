@@ -1,5 +1,6 @@
 #include <cmath>
-#include "matrix.cpp"
+
+#include "Matrix.hpp"
 
 int main() {
     std::printf("Start\n");

@@ -1,4 +1,4 @@
-#include "Layer.cpp"
+#include "Layer.hpp"
 
 class Input: public Layer {
     public:

@@ -1,4 +1,4 @@
-
+#include "LossFun.hpp"
 
 Matrix<double> MSE(Matrix<double> y_pred, Matrix<double> y_true){
     int A1[] = {y_pred.GetDims(1)};

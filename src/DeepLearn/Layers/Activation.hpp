@@ -1,4 +1,8 @@
-#include "Layer.cpp"
+#include "Layer.hpp"
+
+#include "../Functions/Activations.hpp"
+
+#include <cstring>
 
 class Activation: public Layer {
     private:

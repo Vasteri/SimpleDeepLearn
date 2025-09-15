@@ -1,5 +1,3 @@
-#pragma once
-#include <iostream>
 #include "Matrix.hpp"
 
 template <typename Type>
@@ -222,7 +220,7 @@ Matrix<Type> ElementWiseMultiplication(const Matrix<Type>& mat1, const Matrix<Ty
 
 template <typename Type>
 void Matrix<Type>::print_mat(const char* out) {
-    printf(out);
+    printf("%s", out);
     if (dim == 1){
         for (int i = 0; i < memory; i++)
             { printf("%f\n", mat[i]); }

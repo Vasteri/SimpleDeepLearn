@@ -1,4 +1,4 @@
-#include "Layer.cpp"
+#include "Layer.hpp"
 
 class Neuron: public Layer {
     private:

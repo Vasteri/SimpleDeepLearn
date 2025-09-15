@@ -1,3 +1,9 @@
+#pragma once
+
+#include <iostream>
+
+#include "../../Matrix/Matrix.hpp"
+
 class Layer {
     protected:
         int   input_shape;

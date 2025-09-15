@@ -1,8 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <string.h>
-#include "Matrix/Matrix.cpp"
-#include "DeepLearn/Model.cpp"
+#include "DeepLearn/Model.hpp"
 
 std::ostream &operator<<(std::ostream& os, const std::vector<double>& mas){
     for (unsigned int i = 0; i < mas.size(); i++)
